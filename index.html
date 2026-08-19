@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Hitster Play | Adivina el año de la canción</title>
+    <meta
+    name="description"
+    content="Hitster Play es un juego musical online donde debes escuchar canciones, adivinar su año y colocarlas correctamente en una línea del tiempo."
+>
+
+<meta
+    name="keywords"
+    content="hitster online, juego musical, adivinar canciones, adivinar año canciones, juego de música, línea del tiempo musical"
+>
+
+<meta name="author" content="Hitster Play">
+
+<meta name="robots" content="index, follow">
+
+<meta property="og:title" content="Hitster Play - Adivina el año de la canción">
+
+<meta
+    property="og:description"
+    content="Escucha canciones, adivina su año y compite con tus amigos colocando cada canción en la línea del tiempo."
+>
+
+<meta property="og:type" content="website">
+
+<meta property="og:image" content="favicon.png">
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+   <audio id="backgroundMusic" loop preload="auto">
+    <source src="Kerusu - Onwards (feat. BriCie).mp3" type="audio/mpeg">
+</audio>
+
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+    <main class="app">
+       
+
+
+
+        <!-- PANTALLA DE INICIO -->
+
+        <section id="homeScreen" class="screen active">
+            <button id="backButton" class="back-button">
+    ‹
+</button>
+            
+
+            
+
+            <div class="brand">
+
+                
+
+                <h1>HITSTER</h1>
+
+                <p>
+                    ADIVINA EL AÑO, COLOCA LA CANCIÓN
+                </p>
+
+            </div>
+
+            <div class="vinyl-stage">
+
+                <div class="wave wave-left"></div>
+
+                <div class="vinyl">
+
+                    <div class="vinyl-ring"></div>
+                    <div class="vinyl-label"></div>
+                    <div class="vinyl-hole"></div>
+
+                </div>
+
+                <div class="wave wave-right"></div>
+
+            </div>
+
+            <button
+                id="startButton"
+                class="primary-button"
+            >
+                COMENZAR
+            </button>
+
+            <button
+                id="howButton"
+                class="secondary-button"
+            >
+                ⓘ CÓMO JUGAR
+            </button>
+            
+            <div id="participantsOptions" class="participants-options">
+
+    <button class="participant-card" data-players="2">
+        2 PARTICIPANTES
+    </button>
+
+    <button class="participant-card" data-players="3">
+        3 PARTICIPANTES
+    </button>
+
+    <button class="participant-card" data-players="4">
+        4 PARTICIPANTES
+    </button>
+
+    <button class="participant-card" data-players="5">
+        5 PARTICIPANTES
+    </button>
+
+</div>
+<!-- NOMBRES DE LOS JUGADORES -->
+
+<div id="playersForm" class="players-form">
+
+    <h3>INGRESA LOS NOMBRES</h3>
+
+    <div id="playersInputs" class="players-inputs"></div>
+
+    <button
+        id="playGameButton"
+        class="primary-button play-game-button"
+    >
+        JUGAR
+    </button>
+
+</div>
+
+        </section>
+
+
+        <!-- PANTALLA DEL JUEGO -->
+
+        <section id="gameScreen" class="screen">
+    <button id="homeButton" class="home-button" aria-label="Volver al inicio">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 3.2L3.8 9.8c-.3.2-.4.7-.1 1 .2.3.7.4 1 .1l.7-.6V19c0 .6.4 1 1 1h4.3c.6 0 1-.4 1-1v-4.2h1.8V19c0 .6.4 1 1 1H18c.6 0 1-.4 1-1v-8.7l.7.6c.3.2.8.2 1-.1.2-.3.2-.8-.1-1L12 3.2z"/>
+    </svg>
+</button>
+
+    <div class="ambient-timeline">
+        <div class="ambient-line"></div>
+
+        <div class="side-disc side-disc-left"></div>
+        <div class="side-disc side-disc-right"></div>
+
+        <div class="ambient-labels ambient-labels-left">
+            <span>60s</span>
+            <span>70s</span>
+            <span>80s</span>
+        </div>
+
+        <div class="ambient-labels ambient-labels-right">
+            <span>00s</span>
+            <span>10s</span>
+            <span>20s</span>
+        </div>
+    </div>
+
+    
+
+    
+
+            <h2>ESCUCHA LA CANCIÓN</h2>
+            <p id="turnText" class="turn-text">
+    TURNO DE JUGADOR
+</p>
+
+            <div class="player-card">
+
+                <div class="mini-vinyl">
+                    <div class="mini-label"></div>
+                </div>
+
+                <div class="equalizer">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+               <audio
+    id="audioPlayer"
+    preload="metadata"
+></audio>
+
+<button
+    id="playMusicButton"
+    class="play-music-button"
+>
+    ▶
+</button>
+
+            </div>
+
+            <p class="instruction">
+                Escucha la canción y selecciona dónde
+                crees que debe ir.
+            </p>
+
+            <div
+                id="timeline"
+                class="timeline"
+            ></div>
+
+            <button
+                id="checkButton"
+                class="primary-button"
+                disabled
+            >
+                COMPROBAR
+            </button>
+
+        </section>
+
+
+        <!-- PANTALLA DEL RESULTADO -->
+
+        <section id="resultScreen" class="screen">
+
+            <h2>RESULTADO</h2>
+
+            <article class="result-card">
+
+                <div
+    id="resultCover"
+    class="result-cover"
+>
+    <img
+        src="ChatGPT Image 10 ago 2026, 12_51_46.png"
+        alt="Portada de la canción"
+    >
+</div>
+
+                <h3 id="resultTitle">
+                    Canción
+                </h3>
+
+                <p id="resultArtist">
+                    Artista
+                </p>
+
+                <strong id="resultYear">
+                    2025
+                </strong>
+
+            </article>
+
+            <div
+                id="resultMessage"
+                class="result-message"
+            >
+                ¡Correcto!
+            </div>
+
+            <p id="resultExplanation"></p>
+
+            <button
+                id="continueButton"
+                class="primary-button"
+            >
+                CONTINUAR
+            </button>
+
+        </section>
+
+
+        
+
+    <!-- VENTANA DE INSTRUCCIONES -->
+
+    <div
+        id="instructionsModal"
+        class="modal"
+    >
+
+        <div class="modal-content">
+
+            <button
+                id="closeModal"
+                class="close-button"
+            >
+                ×
+            </button>
+
+            <h2>CÓMO JUGAR</h2>
+
+            <div class="rule">
+
+                <span>♫</span>
+
+                <div>
+                    <h3>
+                        Escucha la canción
+                    </h3>
+
+                    <p>
+                        Reproduce un fragmento sin ver
+                        el año de lanzamiento.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="rule">
+
+                <span>↔</span>
+
+                <div>
+                    <h3>
+                        Colócala en la línea del tiempo
+                    </h3>
+
+                    <p>
+                        Elige el espacio donde creas
+                        que corresponde.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="rule">
+
+                <span>✓</span>
+
+                <div>
+                    <h3>
+                        Comprueba tu respuesta
+                    </h3>
+
+                    <p>
+                        Descubre el título, artista
+                        y año de la canción.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="rule">
+
+                <span>🏆</span>
+
+                <div>
+                    <h3>
+                        Gana la partida
+                    </h3>
+
+                    <p>
+                        Completa 10 cartas en tu linea de tiempo.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<!-- MODAL GANADOR -->
+<div id="winnerModal" class="winner-modal">
+    <div class="winner-modal-card">
+        <div class="winner-glow winner-glow-left"></div>
+        <div class="winner-glow winner-glow-right"></div>
+
+        <p class="winner-kicker">TENEMOS UN GANADOR</p>
+
+        <h2 id="winnerTitle" class="winner-title">
+            🏆 ¡ANTHONY HA GANADO!
+        </h2>
+
+        <p id="winnerSubtitle" class="winner-subtitle">
+            Consiguió 10 cartas y se llevó la partida.
+        </p>
+
+        <div class="winner-disc">
+            <div class="winner-disc-inner"></div>
+            <div class="winner-disc-hole"></div>
+        </div>
+
+        <button id="winnerButton" class="winner-button">
+            Volver al Inicio
+        </button>
+    </div>
+</div>
+    <script src="script.js"></script>
+
+</body>
+</html>

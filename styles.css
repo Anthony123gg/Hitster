@@ -1,0 +1,3509 @@
+/* ==================================================
+   CONFIGURACIÓN GENERAL
+================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --background: #050913;
+    --panel: rgba(12, 20, 34, 0.95);
+    --text: #f8f9ff;
+    --muted: #aeb9cc;
+
+    --pink: #ff2d8d;
+    --purple: #8938ff;
+    --blue: #17c9ff;
+    --green: #33e6a1;
+    --red: #ff5f77;
+}
+
+body {
+    position: relative;
+    isolation: isolate;
+
+    min-height: 100vh;
+    margin: 0;
+
+    overflow-x: hidden;
+
+    color: var(--text);
+
+    font-family: "Montserrat", sans-serif;
+
+    background:
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(0, 200, 255, 0.10),
+            transparent 24%
+        ),
+        radial-gradient(
+            circle at 85% 18%,
+            rgba(255, 0, 140, 0.10),
+            transparent 22%
+        ),
+        radial-gradient(
+            circle at 78% 78%,
+            rgba(255, 190, 0, 0.08),
+            transparent 22%
+        ),
+        radial-gradient(
+            circle at 20% 82%,
+            rgba(255, 100, 0, 0.07),
+            transparent 20%
+        ),
+        linear-gradient(
+            135deg,
+            #01040b 0%,
+            #04101f 35%,
+            #020611 65%,
+            #010308 100%
+        );
+}
+
+button,
+audio {
+    font: inherit;
+}
+
+button {
+    border: none;
+}
+
+
+/* ==================================================
+   ESTRELLAS DEL FONDO
+================================================== */
+
+body::before {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    z-index: -2;
+
+    pointer-events: none;
+
+    opacity: 0.60;
+
+    background-image:
+        radial-gradient(
+            circle,
+            rgba(255, 0, 140, 0.95) 1.4px,
+            transparent 1.4px
+        ),
+        radial-gradient(
+            circle,
+            rgba(0, 200, 255, 0.95) 1.3px,
+            transparent 1.3px
+        ),
+        radial-gradient(
+            circle,
+            rgba(255, 220, 0, 0.95) 1.5px,
+            transparent 1.5px
+        ),
+        radial-gradient(
+            circle,
+            rgba(255, 110, 0, 0.95) 1.3px,
+            transparent 1.3px
+        ),
+        radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.90) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        180px 180px,
+        220px 220px,
+        260px 260px,
+        300px 300px,
+        140px 140px;
+
+    background-position:
+        0 0,
+        50px 70px,
+        120px 100px,
+        180px 150px,
+        30px 40px;
+
+    filter:
+        drop-shadow(0 0 4px rgba(255, 0, 140, 0.35))
+        drop-shadow(0 0 4px rgba(0, 200, 255, 0.35))
+        drop-shadow(0 0 4px rgba(255, 220, 0, 0.28));
+}
+
+
+/* ==================================================
+   LUCES DEL FONDO
+================================================== */
+
+body::after {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    z-index: -3;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at 25% 35%,
+            rgba(0, 200, 255, 0.08),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 70% 28%,
+            rgba(255, 0, 140, 0.08),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 72% 75%,
+            rgba(255, 220, 0, 0.06),
+            transparent 24%
+        ),
+        radial-gradient(
+            circle at 22% 78%,
+            rgba(255, 110, 0, 0.05),
+            transparent 22%
+        );
+
+    filter: blur(45px);
+
+    opacity: 0.85;
+}
+
+.background-glow {
+    position: fixed;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    z-index: -1;
+
+    filter: blur(85px);
+
+    opacity: 0.26;
+}
+
+.glow-one {
+    top: 8%;
+    left: -110px;
+
+    width: 280px;
+    height: 280px;
+
+    background: rgba(0, 200, 255, 0.85);
+}
+
+.glow-two {
+    right: -110px;
+    bottom: 8%;
+
+    width: 300px;
+    height: 300px;
+
+    background: rgba(255, 0, 140, 0.75);
+}
+
+
+/* ==================================================
+   CONTENEDOR PRINCIPAL
+================================================== */
+
+.app {
+    position: relative;
+
+    width: min(100%, 1080px);
+    min-height: 100vh;
+
+    margin: auto;
+    padding: 20px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    z-index: -1;
+
+    pointer-events: none;
+
+    border-radius: 30px;
+
+    opacity: 0.20;
+
+    background-image:
+        radial-gradient(
+            circle,
+            rgba(255, 0, 140, 0.35) 1px,
+            transparent 1px
+        ),
+        radial-gradient(
+            circle,
+            rgba(0, 200, 255, 0.30) 1px,
+            transparent 1px
+        ),
+        radial-gradient(
+            circle,
+            rgba(255, 220, 0, 0.28) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        120px 120px,
+        160px 160px,
+        200px 200px;
+
+    background-position:
+        0 0,
+        40px 60px,
+        90px 30px;
+}
+
+
+/* ==================================================
+   PANTALLAS
+================================================== */
+
+.screen {
+    display: none;
+
+    width: 100%;
+
+    min-height: 720px;
+
+    padding: 34px;
+
+    border-radius: 30px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.08);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(6, 13, 24, 0.96),
+            rgba(4, 8, 17, 0.98)
+        );
+
+    box-shadow:
+        0 30px 80px
+        rgba(0, 0, 0, 0.5);
+
+    animation: appear 0.35s ease;
+}
+
+.screen.active {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+/* ==================================================
+   PANTALLA DE INICIO
+================================================== */
+
+#homeScreen {
+    position: relative;
+
+    width: min(100%, 1080px);
+
+    min-height: 650px;
+
+    margin: 0 auto;
+
+    padding:
+        28px 34px;
+
+    overflow: hidden;
+
+    
+
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            rgba(123, 52, 255, 0.16),
+            transparent 33%
+        ),
+        radial-gradient(
+            circle at 15% 85%,
+            rgba(23, 201, 255, 0.09),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 80%,
+            rgba(255, 45, 141, 0.10),
+            transparent 32%
+        ),
+        linear-gradient(
+            145deg,
+            #07101f 0%,
+            #040914 55%,
+            #02050c 100%
+        );
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.10);
+
+    box-shadow:
+        0 30px 70px
+        rgba(0, 0, 0, 0.55),
+        0 0 0 1px
+        rgba(255, 255, 255, 0.02),
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.04);
+}
+
+
+/* BORDE PREMIUM */
+
+#homeScreen::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    border-radius: inherit;
+
+    pointer-events: none;
+
+    border: 1px solid rgba(23, 201, 255, 0.35);
+
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 45, 141, 0.12),
+        0 0 12px rgba(23, 201, 255, 0.12),
+        0 0 20px rgba(255, 45, 141, 0.08);
+}
+
+
+/* RESPLANDOR CENTRAL */
+
+#homeScreen::after {
+    content: "";
+
+    position: absolute;
+
+    width: 460px;
+    height: 460px;
+
+    left: 50%;
+    top: 48%;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(137, 56, 255, 0.14),
+            rgba(255, 45, 141, 0.07) 45%,
+            transparent 70%
+        );
+
+    filter: blur(12px);
+
+    pointer-events: none;
+}
+
+
+/* CONTENIDO POR ENCIMA DEL FONDO */
+
+#homeScreen .brand,
+#homeScreen .vinyl-stage,
+#homeScreen .primary-button,
+#homeScreen .secondary-button {
+    position: relative;
+
+    z-index: 2;
+}
+
+
+/* ==================================================
+   TÍTULO
+================================================== */
+
+#homeScreen .brand {
+    margin-bottom: 5px;
+}
+
+#homeScreen .brand h1 {
+    margin: 0;
+
+    font-size:
+        clamp(58px, 8vw, 96px);
+
+    font-weight: 600;
+
+    line-height: 1;
+
+    letter-spacing: 12px;
+
+    color: #ffe7f3;
+
+    text-shadow:
+        0 0 6px
+        rgba(255, 255, 255, 0.65),
+        0 0 16px
+        rgba(255, 45, 141, 0.95),
+        0 0 38px
+        rgba(255, 45, 141, 0.55);
+
+    animation:
+        elegantTitle
+        3.5s
+        ease-in-out
+        infinite alternate;
+}
+
+@keyframes elegantTitle {
+    from {
+        text-shadow:
+            0 0 6px
+            rgba(255, 255, 255, 0.55),
+            0 0 15px
+            rgba(255, 45, 141, 0.75),
+            0 0 30px
+            rgba(255, 45, 141, 0.38);
+    }
+
+    to {
+        text-shadow:
+            0 0 8px
+            rgba(255, 255, 255, 0.8),
+            0 0 22px
+            rgba(255, 45, 141, 1),
+            0 0 48px
+            rgba(137, 56, 255, 0.65);
+    }
+}
+
+#homeScreen .brand p {
+    margin: 14px 0 0;
+
+    color:
+        rgba(255, 255, 255, 0.78);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 3.8px;
+
+    text-transform: uppercase;
+}
+
+
+/* ==================================================
+   DISCO PRINCIPAL
+================================================== */
+
+#homeScreen .vinyl-stage {
+    width: min(92%, 680px);
+
+    height: 250px;
+
+    margin:
+        12px 0 18px;
+
+    display: grid;
+
+    place-items: center;
+}
+
+#homeScreen .vinyl {
+    position: relative;
+
+    z-index: 2;
+
+    width: 205px;
+
+    aspect-ratio: 1;
+
+    border-radius: 50%;
+
+    border:
+        4px solid
+        #07090d;
+
+    background:
+        radial-gradient(
+            circle at 50% 50%,
+            #050607 0 7%,
+            transparent 7.5%
+        ),
+        repeating-radial-gradient(
+            circle at center,
+            #11151c 0px,
+            #11151c 2px,
+            #06080c 3px,
+            #06080c 6px
+        );
+
+    box-shadow:
+        0 0 0 1px
+        rgba(255,255,255,0.06),
+        0 0 12px
+        rgba(23,201,255,0.55),
+        0 0 24px
+        rgba(137,56,255,0.45),
+        0 0 38px
+        rgba(255,45,141,0.28);
+
+    animation:
+        spin
+        10s
+        linear
+        infinite;
+}
+
+#homeScreen .vinyl::before {
+    content: "";
+
+    position: absolute;
+
+    inset: -10px;
+
+    border-radius: 50%;
+
+    border:
+        2px solid
+        rgba(23, 201, 255, 0.72);
+
+    box-shadow:
+        0 0 10px
+        rgba(23, 201, 255, 0.55),
+        0 0 18px
+        rgba(137, 56, 255, 0.45),
+        0 0 28px
+        rgba(255, 45, 141, 0.35);
+}
+
+#homeScreen .vinyl::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 7%;
+
+    border-radius: 50%;
+
+    background:
+        conic-gradient(
+            from 210deg,
+            transparent 0deg,
+            rgba(255,255,255,0.05) 18deg,
+            rgba(255,255,255,0.16) 30deg,
+            rgba(255,255,255,0.03) 43deg,
+            transparent 58deg,
+            transparent 360deg
+        );
+
+    mix-blend-mode: screen;
+
+    pointer-events: none;
+}
+
+.vinyl-ring {
+    position: absolute;
+
+    inset: 34%;
+
+    border:
+        5px solid
+        #232b38;
+
+    border-radius: 50%;
+}
+
+#homeScreen .vinyl-label {
+    position: absolute;
+
+    inset: 39%;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            #ffffff 0 32%,
+            #e9edf4 33% 68%,
+            #b8bec9 69% 100%
+        );
+
+    box-shadow:
+        inset 0 0 8px
+        rgba(0,0,0,0.25),
+        0 0 8px
+        rgba(255,255,255,0.15);
+}
+
+#homeScreen .vinyl-hole {
+    position: absolute;
+
+    inset: 48%;
+
+    border-radius: 50%;
+
+    background: #050505;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(255,255,255,0.16);
+}
+
+@keyframes spin {
+    to {
+        transform:
+            rotate(360deg);
+    }
+}
+
+
+/* ==================================================
+   ONDAS MUSICALES
+================================================== */
+
+#homeScreen .wave {
+    position: absolute;
+
+    width: 49%;
+    height: 105px;
+
+    opacity: 0.58;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 9px,
+            rgba(23, 201, 255, 0.8) 10px 12px,
+            transparent 13px 18px,
+            rgba(255, 45, 141, 0.8) 19px 22px
+        );
+
+    filter:
+        drop-shadow(
+            0 0 6px
+            rgba(23, 201, 255, 0.45)
+        )
+        drop-shadow(
+            0 0 10px
+            rgba(255, 45, 141, 0.35)
+        );
+
+    mask-image:
+        linear-gradient(
+            to bottom,
+            transparent,
+            black 25%,
+            black 75%,
+            transparent
+        );
+}
+
+.wave-left {
+    left: 0;
+}
+
+.wave-right {
+    right: 0;
+}
+
+
+/* ==================================================
+   BOTONES GENERALES
+================================================== */
+
+.primary-button,
+.secondary-button {
+    width:
+        min(100%, 390px);
+
+    min-height: 58px;
+
+    margin-top: 14px;
+
+    border-radius: 999px;
+
+    color: white;
+
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+
+    cursor: pointer;
+
+    transition:
+        0.25s ease;
+}
+
+.primary-button {
+    background:
+        linear-gradient(
+            90deg,
+            var(--purple),
+            var(--pink)
+        );
+
+    box-shadow:
+        0 12px 30px
+        rgba(255, 45, 141, 0.25);
+}
+
+.primary-button:hover:not(:disabled) {
+    transform:
+        translateY(-3px)
+        scale(1.01);
+
+    box-shadow:
+        0 16px 40px
+        rgba(255, 45, 141, 0.4);
+}
+
+.primary-button:disabled {
+    opacity: 0.4;
+
+    cursor: not-allowed;
+}
+
+.secondary-button {
+    background: transparent;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.28);
+}
+
+.secondary-button:hover {
+    background:
+        rgba(255, 255, 255, 0.06);
+}
+
+
+/* ==================================================
+   BOTÓN JUGAR
+================================================== */
+
+#homeScreen .primary-button {
+    position: relative;
+
+    width:
+        min(100%, 350px);
+
+    min-height: 54px;
+
+    margin-top: 0;
+
+    overflow: hidden;
+
+    letter-spacing: 1.5px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.14);
+
+    background:
+        linear-gradient(
+            100deg,
+            #7138f5,
+            #b42ed8,
+            #ff2d8d
+        );
+
+    box-shadow:
+        0 10px 26px
+        rgba(137, 56, 255, 0.24),
+        0 7px 24px
+        rgba(255, 45, 141, 0.18);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+#homeScreen .primary-button::before {
+    content: "";
+
+    position: absolute;
+
+    top: -40%;
+    left: -45%;
+
+    width: 35%;
+    height: 180%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,0.35),
+            transparent
+        );
+
+    transform:
+        rotate(18deg);
+
+    animation:
+        buttonShine
+        3.8s
+        ease-in-out
+        infinite;
+}
+
+@keyframes buttonShine {
+    0% {
+        left: -45%;
+    }
+
+    45% {
+        left: -45%;
+    }
+
+    70% {
+        left: 120%;
+    }
+
+    100% {
+        left: 120%;
+    }
+}
+
+#homeScreen .primary-button:hover {
+    transform:
+        translateY(-3px)
+        scale(1.015);
+
+    box-shadow:
+        0 15px 34px
+        rgba(137, 56, 255, 0.34),
+        0 10px 28px
+        rgba(255, 45, 141, 0.28);
+}
+
+#homeScreen .primary-button:active {
+    transform:
+        translateY(0)
+        scale(0.985);
+
+    box-shadow:
+        0 6px 16px
+        rgba(137, 56, 255, 0.22);
+}
+
+
+/* ==================================================
+   BOTÓN CÓMO JUGAR
+================================================== */
+
+#homeScreen .secondary-button {
+    width:
+        min(100%, 350px);
+
+    min-height: 50px;
+
+    margin-top: 10px;
+
+    color:
+        rgba(255, 255, 255, 0.82);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.18);
+
+    background:
+        rgba(255, 255, 255, 0.025);
+
+    backdrop-filter:
+        blur(12px);
+
+    letter-spacing: 0.8px;
+}
+
+#homeScreen .secondary-button:hover {
+    color: white;
+
+    border-color:
+        rgba(255, 255, 255, 0.35);
+
+    background:
+        rgba(255, 255, 255, 0.06);
+
+    transform:
+        translateY(-2px);
+}
+
+
+
+
+.screen h2 {
+    margin: 28px 0;
+
+    text-align: center;
+
+    color: #e4baff;
+
+    letter-spacing: 1px;
+}
+
+
+/* ==================================================
+   REPRODUCTOR
+================================================== */
+
+.player-card {
+    position: relative;
+    z-index: 2;
+
+    width: min(100%, 390px);
+    padding: 25px;
+
+    margin-top: 15px;
+
+    text-align: center;
+    border-radius: 24px;
+
+    border: 1px solid rgba(23, 201, 255, 0.45);
+
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(0, 217, 255, 0.14),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at bottom right,
+            rgba(255, 45, 141, 0.14),
+            transparent 38%
+        ),
+        linear-gradient(
+            145deg,
+            #071726 0%,
+            #0b1128 45%,
+            #17091f 100%
+        );
+
+    box-shadow:
+        0 0 20px rgba(0, 200, 255, 0.15),
+        0 0 24px rgba(255, 45, 141, 0.10),
+        inset 0 0 25px rgba(23, 201, 255, 0.05);
+
+    overflow: hidden;
+    
+}
+
+
+
+.player-card::after {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 88px;
+
+    transform: translate(-50%, -50%);
+
+    width: 300px;
+    height: 90px;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 8px,
+            rgba(0, 217, 255, 0.65) 8px 12px,
+            transparent 12px 18px,
+            rgba(255, 45, 141, 0.65) 18px 22px
+        );
+
+    mask-image:
+        linear-gradient(
+            to right,
+            transparent,
+            black 18%,
+            black 82%,
+            transparent
+        );
+
+    opacity: 0.7;
+
+    filter:
+        drop-shadow(0 0 6px rgba(0, 217, 255, 0.35))
+        drop-shadow(0 0 6px rgba(255, 45, 141, 0.35));
+
+    pointer-events: none;
+
+    z-index: 0;
+}
+
+.mini-vinyl {
+    position: relative;
+    z-index: 2;
+
+    width: 125px;
+    aspect-ratio: 1;
+
+    margin: auto;
+
+    border-radius: 50%;
+
+    background:
+        repeating-radial-gradient(
+            circle,
+            #1b1f28 0 3px,
+            #06070a 4px 8px
+        );
+
+    display: grid;
+    place-items: center;
+
+    transform-origin: center;
+
+    animation: none;
+}
+
+
+
+
+/* CUANDO LA CANCIÓN ESTÁ SONANDO */
+
+.player-card.playing .mini-vinyl {
+    animation:
+        spinMiniVinyl 4s linear infinite,
+        pulseMiniVinyl 0.65s ease-in-out infinite alternate;
+}
+
+
+@keyframes spinMiniVinyl {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+@keyframes pulseMiniVinyl {
+
+    from {
+        scale: 1;
+    }
+
+    to {
+        scale: 1.045;
+    }
+
+}
+
+
+.mini-label {
+    width: 42px;
+
+    aspect-ratio: 1;
+
+    border-radius: 50%;
+
+    background:
+        #e9edf4;
+
+    border:
+        12px solid
+        #999;
+}
+
+
+/* ==================================================
+   ECUALIZADOR
+================================================== */
+
+.equalizer {
+    height: 42px;
+
+    margin:
+        20px auto 8px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 4px;
+}
+
+/* PAUSA: todos como puntos iguales */
+.equalizer:not(.playing) span {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: var(--pink);
+
+    animation: none !important;
+}
+
+
+/* PLAY: vuelven a moverse */
+.equalizer.playing span {
+    width: 5px;
+    height: 15px;
+
+    border-radius: 4px;
+
+    background: var(--pink);
+
+    animation:
+        equalize
+        0.8s
+        ease-in-out
+        infinite
+        alternate;
+}
+
+
+/* Ritmo distinto entre barras */
+.equalizer.playing span:nth-child(2n) {
+    animation-delay: 0.2s;
+}
+
+.equalizer.playing span:nth-child(3n) {
+    animation-delay: 0.4s;
+}
+
+@keyframes equalize {
+    from {
+        height: 8px;
+    }
+
+    to {
+        height: 38px;
+    }
+}
+
+audio {
+    width: 100%;
+}
+
+.instruction {
+    margin:
+        28px 0 20px;
+
+    color:
+        var(--muted);
+
+    text-align: center;
+}
+
+
+/* ==================================================
+   LÍNEA DE TIEMPO
+================================================== */
+
+.timeline {
+    width: 100%;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    margin-bottom: 24px;
+}
+
+.timeline-slot,
+.timeline-card {
+    width: 150px;
+    height: 175px;
+
+    min-width: 150px;
+    min-height: 175px;
+}
+
+.timeline-slot {
+    width: 150px;
+    height: 175px;
+    flex: 0 0 150px;
+
+    padding: 12px;
+
+    color: #d8e1ef;
+
+    border: 2px dashed rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+
+    background: rgba(255, 255, 255, 0.03);
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.timeline-slot:hover,
+.timeline-slot.selected {
+    border-color:
+        var(--pink);
+
+    background:
+        rgba(255, 45, 141, 0.1);
+
+    transform:
+        translateY(-4px);
+}
+
+.timeline-card {
+    width: 150px;
+    height: 175px;
+
+    min-width: 150px;
+    min-height: 175px;
+
+    flex: 0 0 150px;
+
+    padding: 14px;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: space-between;
+    align-items: center;
+
+    text-align: center;
+
+    position: relative;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    border:
+        1px solid
+        rgba(23, 201, 255, 0.55);
+
+    background:
+        radial-gradient(
+            circle at 20% 15%,
+            rgba(137, 56, 255, 0.22),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 85% 85%,
+            rgba(255, 45, 141, 0.18),
+            transparent 38%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(16, 30, 52, 0.98),
+            rgba(7, 13, 24, 0.98)
+        );
+
+    box-shadow:
+        inset 0 0 18px rgba(23, 201, 255, 0.05),
+        0 8px 20px rgba(0, 0, 0, 0.28);
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+
+
+
+.timeline-card small {
+    width: 100%;
+
+    color: #f4f6ff;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    line-height: 1.3;
+
+    text-align: center;
+
+    text-shadow:
+        0 2px 5px rgba(0, 0, 0, 0.75);
+}
+
+.timeline-card strong {
+    padding: 6px 12px;
+
+    border-radius: 999px;
+
+    color: #20d6ff;
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    background:
+        rgba(23, 201, 255, 0.08);
+
+    border:
+        1px solid
+        rgba(23, 201, 255, 0.22);
+
+    text-shadow:
+        0 0 8px rgba(23, 201, 255, 0.45);
+}
+
+.timeline-card strong {
+    color:
+        var(--blue);
+
+    font-size: 18px;
+}
+
+.timeline-card small {
+    color:
+        var(--muted);
+}
+
+
+/* ==================================================
+   RESULTADO
+================================================== */
+
+.result-card {
+    width:
+        min(100%, 320px);
+
+    padding: 20px;
+
+    text-align: center;
+
+    border-radius: 24px;
+
+    border:
+        2px solid
+        var(--blue);
+
+    background:
+        var(--panel);
+
+    box-shadow:
+        0 0 24px
+        rgba(23, 201, 255, 0.25);
+}
+
+.result-cover {
+    height: 180px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 16px;
+
+    font-size: 70px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(137, 56, 255, 0.8),
+            rgba(255, 45, 141, 0.8)
+        ),
+        #111;
+}
+
+.result-card h3 {
+    margin:
+        18px 0 4px;
+}
+
+.result-card p {
+    margin: 0;
+
+    color:
+        var(--muted);
+}
+
+.result-card strong {
+    display: block;
+
+    margin-top: 12px;
+
+    font-size: 32px;
+}
+
+.result-message {
+    margin-top: 26px;
+
+    font-size: 30px;
+
+    font-weight: 800;
+}
+
+.result-message.correct {
+    color:
+        var(--green);
+}
+
+.result-message.incorrect {
+    color:
+        var(--red);
+}
+
+#resultExplanation {
+    color:
+        var(--muted);
+
+    text-align: center;
+}
+
+
+/* ==================================================
+   PUNTUACIÓN FINAL
+================================================== */
+
+.score-circle {
+    width: 245px;
+
+    aspect-ratio: 1;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    background:
+        radial-gradient(
+            circle,
+            #07111d 58%,
+            transparent 60%
+        ),
+        conic-gradient(
+            var(--green),
+            var(--blue),
+            var(--purple),
+            var(--green)
+        );
+
+    box-shadow:
+        0 0 35px
+        rgba(23, 201, 255, 0.25);
+}
+
+.score-circle span,
+.score-circle small {
+    color:
+        var(--muted);
+}
+
+.score-circle strong {
+    font-size: 56px;
+}
+
+.timeline-title {
+    margin-top: 35px;
+}
+
+.final-timeline {
+    width: 100%;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    margin-bottom: 30px;
+}
+
+
+/* ==================================================
+   VENTANA DE INSTRUCCIONES
+================================================== */
+
+.modal {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 20;
+
+    display: none;
+
+    place-items: center;
+
+    padding: 20px;
+
+    background:
+        rgba(1, 4, 10, 0.86);
+
+    backdrop-filter:
+        blur(12px);
+}
+
+.modal.open {
+    display: grid;
+}
+
+.modal-content {
+    position: relative;
+
+    width:
+        min(100%, 580px);
+
+    padding: 28px;
+
+    border-radius: 25px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.12);
+
+    background:
+        #09111d;
+}
+
+.close-button {
+    position: absolute;
+
+    right: 18px;
+    top: 12px;
+
+    color:
+        var(--muted);
+
+    background:
+        transparent;
+
+    font-size: 34px;
+
+    cursor: pointer;
+}
+
+.rule {
+    display: flex;
+
+    gap: 16px;
+
+    align-items: center;
+
+    margin-top: 14px;
+
+    padding: 16px;
+
+    border-radius: 18px;
+
+    background:
+        rgba(255, 255, 255, 0.04);
+}
+
+.rule > span {
+    width: 55px;
+    height: 55px;
+
+    flex:
+        0 0 55px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 50%;
+
+    font-size: 25px;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--purple),
+            var(--pink)
+        );
+}
+
+.rule h3,
+.rule p {
+    margin: 0;
+}
+
+.rule p {
+    margin-top: 5px;
+
+    color:
+        var(--muted);
+
+    font-size: 14px;
+}
+
+
+/* ==================================================
+   RESPONSIVE
+================================================== */
+
+@media (max-width: 650px) {
+
+    .app {
+        padding: 0;
+    }
+
+    .screen {
+        min-height: 100vh;
+
+        padding:
+            24px 18px;
+
+        border-radius: 0;
+    }
+
+    #homeScreen {
+        min-height: 100vh;
+
+        padding:
+            30px 18px;
+    }
+
+    #homeScreen .brand h1 {
+        font-size:
+            clamp(
+                52px,
+                17vw,
+                72px
+            );
+
+        letter-spacing:
+            5px;
+    }
+
+    #homeScreen .brand p {
+        max-width: 330px;
+
+        font-size: 10px;
+
+        line-height: 1.7;
+
+        letter-spacing: 2px;
+    }
+
+    #homeScreen .vinyl-stage {
+        height: 265px;
+
+        margin:
+            12px 0 20px;
+    }
+
+    #homeScreen .vinyl {
+        width: 185px;
+    }
+
+    #homeScreen .wave {
+        width: 44%;
+
+        height: 85px;
+    }
+
+    #homeScreen .primary-button,
+    #homeScreen .secondary-button {
+        width:
+            min(100%, 330px);
+    }
+
+    body::before {
+        opacity: 0.48;
+    }
+
+    .glow-one,
+    .glow-two {
+        width: 220px;
+        height: 220px;
+    }
+
+    .app::after {
+        opacity: 0.14;
+    }
+
+    .timeline-slot,
+    .timeline-card {
+        min-width: 88px;
+        min-height: 115px;
+    }
+}
+
+/* =========================================
+   EFECTO REACTIVO DEL DISCO A LA MÚSICA
+========================================= */
+
+#homeScreen .vinyl-stage {
+    transform: scale(1);
+    transform-origin: center;
+    transition: transform 0.08s linear;
+    will-change: transform;
+}
+
+#homeScreen .wave {
+    transition:
+        opacity 0.08s linear,
+        filter 0.08s linear;
+    will-change: opacity, filter;
+}
+/* ==============================
+   OPCIONES DE PARTICIPANTES
+================================ */
+
+.participants-options {
+    display: none;
+
+    width: min(100%, 900px);
+
+    margin-top: 20px;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 12px;
+
+    position: relative;
+    z-index: 3;
+}
+
+.participants-options.show {
+    display: grid;
+}
+
+.participant-card {
+    min-width: 0;
+    min-height: 85px;
+
+    padding: 12px 8px;
+
+    border-radius: 18px;
+
+    color: white;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(137, 56, 255, 0.20),
+            rgba(255, 45, 141, 0.16)
+        );
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.12);
+
+    box-shadow:
+        0 10px 24px
+        rgba(0, 0, 0, 0.25);
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.participant-card:hover {
+    transform:
+        translateY(-4px)
+        scale(1.02);
+
+    border-color:
+        rgba(23, 201, 255, 0.55);
+
+    box-shadow:
+        0 14px 30px
+        rgba(137, 56, 255, 0.22),
+        0 0 16px
+        rgba(255, 45, 141, 0.16);
+}
+/* =========================================
+   FORMULARIO DE NOMBRES DE JUGADORES
+========================================= */
+
+.players-form {
+    display: none;
+
+    width: min(100%, 850px);
+
+    position: relative;
+    z-index: 3;
+
+    min-height: 190px;
+
+    margin: 15px auto 0;
+
+    text-align: center;
+}
+
+.players-form.show {
+    display: grid;
+
+    grid-template-rows:
+        auto
+        auto
+        1fr;
+
+    align-items: start;
+}
+
+
+
+.players-form h3 {
+    margin:
+        0 0 16px;
+
+    color:
+        rgba(255, 255, 255, 0.85);
+
+    font-size: 13px;
+
+    letter-spacing: 2px;
+}
+
+
+/* CAMPOS DE LOS JUGADORES */
+
+.players-inputs {
+    width: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    flex-wrap: nowrap;
+}
+
+.player-name-input {
+    width: 100%;
+
+    min-width: 0;
+
+    height: 55px;
+
+    padding:
+        0 15px;
+
+    border-radius: 16px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.14);
+
+    outline: none;
+
+    color: white;
+
+    text-align: center;
+
+    font-family:
+        "Montserrat",
+        sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(137, 56, 255, 0.12),
+            rgba(255, 45, 141, 0.08)
+        );
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+}
+
+.player-name-input::placeholder {
+    color:
+        rgba(255, 255, 255, 0.38);
+
+    font-weight: 600;
+}
+
+.player-name-input:focus {
+    border-color:
+        rgba(23, 201, 255, 0.65);
+
+    box-shadow:
+        0 0 15px
+        rgba(23, 201, 255, 0.15);
+
+    transform:
+        translateY(-2px);
+}
+
+
+/* BOTÓN JUGAR */
+
+.play-game-button {
+    display: none;
+
+    width: min(100%, 350px);
+
+    margin: 0;
+
+    justify-self: center;
+
+    align-self: center;
+
+    text-align: center;
+}
+
+.play-game-button.show {
+    display: block;
+}
+
+
+
+
+
+/* CELULAR */
+
+@media (max-width: 650px) {
+
+    .players-inputs {
+        flex-wrap: wrap;
+    }
+
+    .player-name-input {
+        width:
+            calc(50% - 6px);
+    }
+}
+
+
+/* ==================================================
+   BOTÓN DE RETROCESO
+================================================== */
+
+.back-button {
+    display: none;
+
+    position: absolute;
+    top: 26px;
+    left: 26px;
+
+    z-index: 10;
+
+    width: 52px;
+    height: 52px;
+
+    padding: 0;
+
+    border-radius: 16px;
+
+    color: #ffffff;
+
+    font-size: 27px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(23, 201, 255, 0.10),
+            rgba(137, 56, 255, 0.10),
+            rgba(255, 45, 141, 0.08)
+        );
+
+    border:
+        1px solid
+        rgba(23, 201, 255, 0.40);
+
+    box-shadow:
+        0 0 12px rgba(23, 201, 255, 0.10),
+        inset 0 0 12px rgba(255, 255, 255, 0.025);
+
+    backdrop-filter: blur(12px);
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+}
+
+.back-button.show {
+    display: grid;
+    place-items: center;
+}
+
+.back-button:hover {
+    transform:
+        translateX(-3px)
+        scale(1.06);
+
+    border-color:
+        rgba(23, 201, 255, 0.85);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(23, 201, 255, 0.18),
+            rgba(137, 56, 255, 0.15),
+            rgba(255, 45, 141, 0.12)
+        );
+
+    box-shadow:
+        0 0 12px rgba(23, 201, 255, 0.35),
+        0 0 25px rgba(137, 56, 255, 0.18);
+}
+
+.back-button:active {
+    transform:
+        translateX(-1px)
+        scale(0.95);
+}
+
+/* ==================================================
+   EFECTO DEL DISCO MIENTRAS SUENA LA MÚSICA
+================================================== */
+
+#homeScreen .vinyl.music-active {
+    animation:
+        spin 10s linear infinite,
+        vinylPulse 0.55s ease-in-out infinite alternate;
+}
+
+@keyframes vinylPulse {
+    0% {
+        scale: 1;
+    }
+
+    50% {
+        scale: 1.025;
+    }
+
+    100% {
+        scale: 1.045;
+    }
+}
+.game-header {
+    display: none;
+}
+
+#gameScreen #audioPlayer {
+    display: none;
+}
+
+.play-music-button {
+    width: 62px;
+    height: 62px;
+
+    margin: 15px auto 0;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    color: white;
+
+    font-size: 24px;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7138f5,
+            #ff2d8d
+        );
+
+    box-shadow:
+        0 0 18px rgba(255, 45, 141, 0.35);
+
+    transition: 0.2s ease;
+}
+
+.play-music-button:hover {
+    transform: scale(1.08);
+
+    box-shadow:
+        0 0 25px rgba(255, 45, 141, 0.55);
+}
+
+.result-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+}
+
+#resultTitle {
+    color: #ffffff;
+    font-weight: 800;
+
+    text-shadow:
+        0 0 6px rgba(255, 255, 255, 0.35),
+        0 0 12px rgba(255, 45, 141, 0.45),
+        0 2px 5px rgba(0, 0, 0, 0.95);
+}
+
+#resultArtist {
+    color: #d9c7ff;
+    font-weight: 600;
+
+    text-shadow:
+        0 0 8px rgba(137, 56, 255, 0.45),
+        0 2px 5px rgba(0, 0, 0, 0.95);
+}
+
+#resultYear {
+    color: #21d4ff;
+    font-weight: 800;
+
+    text-shadow:
+        0 0 8px rgba(23, 201, 255, 0.65),
+        0 0 16px rgba(23, 201, 255, 0.30),
+        0 3px 6px rgba(0, 0, 0, 0.95);
+}
+
+.home-button {
+    position: absolute;
+    top: 26px;
+    left: 26px;
+
+    width: 66px;
+    height: 66px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 0;
+    z-index: 30;
+    cursor: pointer;
+
+    border-radius: 18px;
+
+    border:
+        1px solid
+        rgba(0, 210, 255, 0.35);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(8, 28, 55, 0.82),
+            rgba(5, 18, 38, 0.90)
+        );
+
+    box-shadow:
+        0 0 7px rgba(0, 195, 255, 0.16),
+        inset 0 0 0 1px rgba(255,255,255,0.025);
+
+    transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease;
+}
+
+.home-button svg {
+    width: 30px;
+    height: 30px;
+
+    fill: #a8ddf7;
+
+    filter:
+        drop-shadow(
+            0 0 3px
+            rgba(80, 200, 255, 0.35)
+        );
+}
+
+.home-button:hover {
+    transform: scale(1.03);
+
+    box-shadow:
+        0 0 10px rgba(0, 195, 255, 0.22);
+}
+
+.home-button:active {
+    transform: scale(0.96);
+}
+
+
+
+
+/* ==================================================
+   ILUMINACIÓN SUAVE DE LA CAJA DEL JUEGO
+================================================== */
+
+#gameScreen {
+    border-color: rgba(255, 255, 255, 0.08);
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.5),
+        0 0 0 rgba(23, 201, 255, 0),
+        0 0 0 rgba(137, 56, 255, 0),
+        0 0 0 rgba(255, 45, 141, 0);
+
+    transition:
+        box-shadow 1.2s ease,
+        border-color 1.2s ease;
+}
+
+
+/* CUANDO SUENA LA MÚSICA */
+
+#gameScreen.music-playing {
+    border-color:
+        rgba(23, 201, 255, 0.60);
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.5),
+
+        0 0 25px rgba(23, 201, 255, 0.28),
+
+        0 0 50px rgba(137, 56, 255, 0.22),
+
+        0 0 75px rgba(255, 45, 141, 0.16);
+}
+
+@keyframes gameGlowPulse {
+
+    from {
+        box-shadow:
+            0 0 18px rgba(23, 201, 255, 0.14),
+            0 0 35px rgba(137, 56, 255, 0.10),
+            0 0 55px rgba(255, 45, 141, 0.07),
+            inset 0 0 22px rgba(23, 201, 255, 0.03);
+    }
+
+    to {
+        box-shadow:
+            0 0 30px rgba(23, 201, 255, 0.30),
+            0 0 55px rgba(137, 56, 255, 0.22),
+            0 0 85px rgba(255, 45, 141, 0.15),
+            inset 0 0 34px rgba(255, 45, 141, 0.05);
+    }
+}
+
+/* =========================================
+   DECORACIÓN TIPO HITSTER EN GAME SCREEN
+========================================= */
+
+#gameScreen {
+    --linea-tiempo-y: 270px;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+
+/* CONTENEDOR GENERAL */
+.ambient-timeline {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* LÍNEA HORIZONTAL */
+.ambient-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: var(--linea-tiempo-y);
+    height: 2px;
+
+    background:
+    linear-gradient(
+        90deg,
+
+        #17c9ff 0%,
+        #17c9ff 30%,
+
+        rgba(23, 201, 255, 0.35) 39%,
+
+        rgba(137, 56, 255, 0.08) 46%,
+        rgba(137, 56, 255, 0.04) 50%,
+        rgba(255, 45, 141, 0.08) 54%,
+
+        rgba(255, 45, 141, 0.35) 61%,
+
+        #ff2d8d 70%,
+        #ff2d8d 100%
+    );
+
+    box-shadow:
+        0 0 8px rgba(0, 200, 255, 0.28),
+        0 0 12px rgba(255, 45, 141, 0.18);
+}
+
+/* ==================================================
+   DISCOS DECORATIVOS LATERALES
+================================================== */
+
+.side-disc {
+    position: absolute;
+    top: var(--linea-tiempo-y);
+    width: 340px;
+    height: 340px;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.32;
+    z-index: 0;
+}
+
+
+/* DISCO IZQUIERDO */
+
+.side-disc-left {
+    left: -245px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(23, 201, 255, 0.10) 0 22%,
+            transparent 23%
+        ),
+        repeating-radial-gradient(
+            circle,
+            transparent 0 25px,
+            rgba(23, 201, 255, 0.30) 26px 28px
+        );
+
+    box-shadow:
+        inset 0 0 45px rgba(23, 201, 255, 0.08),
+        0 0 45px rgba(23, 201, 255, 0.08);
+}
+
+
+/* DISCO DERECHO */
+
+.side-disc-right {
+    right: -245px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255, 45, 141, 0.10) 0 22%,
+            transparent 23%
+        ),
+        repeating-radial-gradient(
+            circle,
+            transparent 0 25px,
+            rgba(255, 45, 141, 0.28) 26px 28px
+        );
+
+    box-shadow:
+        inset 0 0 45px rgba(255, 45, 141, 0.08),
+        0 0 45px rgba(255, 45, 141, 0.08);
+}
+
+/* TEXTOS DE DÉCADAS */
+.ambient-labels {
+    position: absolute;
+    top: 245px;
+    display: flex;
+    gap: 70px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.ambient-labels span {
+    position: relative;
+}
+
+/* puntito debajo de cada década */
+.ambient-labels span::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 28px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+}
+
+/* IZQUIERDA AZUL */
+.ambient-labels-left {
+    left: 55px;
+    color: #49d8ff;
+    text-shadow: 0 0 10px rgba(23, 201, 255, 0.35);
+}
+
+.ambient-labels-left span::after {
+    background: #49d8ff;
+    box-shadow: 0 0 8px rgba(23, 201, 255, 0.8);
+}
+
+/* DERECHA ROSA */
+.ambient-labels-right {
+    right: 55px;
+    color: #ff5cb8;
+    text-shadow: 0 0 10px rgba(255, 45, 141, 0.35);
+}
+
+.ambient-labels-right span::after {
+    background: #ff5cb8;
+    box-shadow: 0 0 8px rgba(255, 45, 141, 0.8);
+}
+
+
+
+#gameScreen h2 {
+    margin-top: 10px;
+    margin-bottom: 28px;
+
+    text-align: center;
+
+    font-family: "Orbitron", sans-serif;
+
+    color: #f5d8ff;
+
+    font-size: 24px;
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    text-shadow:
+        0 0 5px rgba(255, 255, 255, 0.22),
+        0 0 10px rgba(255, 45, 141, 0.20),
+        0 0 16px rgba(137, 56, 255, 0.16);
+}
+/* CASITA SIEMPRE EN LA ESQUINA */
+
+#gameScreen .home-button {
+    position: absolute;
+
+    top: 40px;
+    left: 40px;
+
+    z-index: 50;
+
+    width: 52px;
+    height: 52px;
+
+    display: grid;
+    place-items: center;
+}
+
+/* DISCOS LATERALES: TRANSICIÓN SUAVE */
+
+.side-disc {
+    transition:
+        opacity 1.2s ease,
+        filter 1.2s ease;
+}
+
+/* PAUSA */
+.side-disc-left {
+    opacity: 0.18;
+
+    filter:
+        drop-shadow(
+            0 0 5px
+            rgba(23, 201, 255, 0.08)
+        );
+}
+
+.side-disc-right {
+    opacity: 0.18;
+
+    filter:
+        drop-shadow(
+            0 0 5px
+            rgba(255, 45, 141, 0.08)
+        );
+}
+
+/* PLAY */
+#gameScreen.music-playing .side-disc-left {
+    opacity: 0.48;
+
+    filter:
+        drop-shadow(
+            0 0 16px
+            rgba(23, 201, 255, 0.48)
+        )
+        drop-shadow(
+            0 0 30px
+            rgba(23, 201, 255, 0.22)
+        );
+}
+
+#gameScreen.music-playing .side-disc-right {
+    opacity: 0.48;
+
+    filter:
+        drop-shadow(
+            0 0 16px
+            rgba(255, 45, 141, 0.48)
+        )
+        drop-shadow(
+            0 0 30px
+            rgba(255, 45, 141, 0.22)
+        );
+}
+
+#checkButton {
+    transition:
+        opacity 0.3s ease,
+        transform 0.25s ease,
+        box-shadow 0.3s ease,
+        filter 0.3s ease;
+}
+
+/* DESACTIVADO */
+#checkButton:disabled {
+    opacity: 0.38;
+
+    filter:
+        saturate(0.65);
+
+    box-shadow:
+        0 8px 20px
+        rgba(0, 0, 0, 0.20);
+
+    cursor: not-allowed;
+}
+
+/* ACTIVADO */
+#checkButton:not(:disabled) {
+    opacity: 1;
+
+    background:
+        linear-gradient(
+            90deg,
+            #7138f5,
+            #b42ed8,
+            #ff2d8d
+        );
+
+    box-shadow:
+        0 10px 26px rgba(137, 56, 255, 0.32),
+        0 0 18px rgba(255, 45, 141, 0.20);
+
+    filter:
+        saturate(1.1);
+}
+
+#checkButton:not(:disabled):hover {
+    transform:
+        translateY(-2px)
+        scale(1.01);
+
+    box-shadow:
+        0 14px 32px rgba(137, 56, 255, 0.38),
+        0 0 24px rgba(255, 45, 141, 0.28);
+}
+
+#resultScreen h2 {
+    position: relative;
+    display: inline-block;
+
+    margin: 0 0 28px;
+
+    font-family: "Orbitron", sans-serif;
+    font-size: clamp(34px, 4vw, 54px);
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+
+    color: #f3d8ff;
+
+    text-shadow:
+        0 0 6px rgba(255, 255, 255, 0.50),
+        0 0 14px rgba(255, 45, 141, 0.40),
+        0 0 28px rgba(137, 56, 255, 0.35);
+}
+
+#resultScreen h2::after {
+    content: "";
+
+    position: absolute;
+    left: 50%;
+    bottom: -12px;
+
+    transform: translateX(-50%);
+
+    width: 95px;
+    height: 4px;
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #17c9ff,
+            #8938ff,
+            #ff2d8d
+        );
+
+    box-shadow:
+        0 0 10px rgba(23, 201, 255, 0.35),
+        0 0 14px rgba(255, 45, 141, 0.28);
+}
+
+.turn-text {
+    margin: -12px 0 18px;
+
+    font-size: 18px;
+    font-weight: 900;
+
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+
+    color: #ffffff;
+
+    background: linear-gradient(
+        90deg,
+        #7de4ff,
+        #caa6ff,
+        #ff7cc8
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    text-shadow:
+        0 0 6px rgba(125, 228, 255, 0.55),
+        0 0 12px rgba(137, 56, 255, 0.35),
+        0 0 18px rgba(255, 45, 141, 0.28);
+
+    animation: turnGlow 1.8s ease-in-out infinite alternate;
+}  
+
+/* ==================================================
+   MODAL GANADOR ESTILO HITSTER
+================================================== */
+
+.winner-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+
+    background: rgba(2, 6, 14, 0.72);
+    backdrop-filter: blur(12px);
+}
+
+.winner-modal.show {
+    display: flex;
+}
+
+.winner-modal-card {
+    position: relative;
+
+    width: min(100%, 560px);
+    padding: 38px 30px 30px;
+
+    text-align: center;
+
+    border-radius: 28px;
+    overflow: hidden;
+
+    border: 1px solid rgba(23, 201, 255, 0.28);
+
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(23, 201, 255, 0.12),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at bottom right,
+            rgba(255, 45, 141, 0.14),
+            transparent 34%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(7, 16, 31, 0.98),
+            rgba(5, 10, 22, 0.98)
+        );
+
+    box-shadow:
+        0 0 30px rgba(23, 201, 255, 0.10),
+        0 0 45px rgba(255, 45, 141, 0.10),
+        0 25px 60px rgba(0, 0, 0, 0.45);
+}
+
+.winner-modal-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.winner-kicker {
+    margin: 0 0 10px;
+
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+
+    color: rgba(255, 255, 255, 0.62);
+}
+
+.winner-title {
+    margin: 0;
+
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: 1px;
+
+    color: #ffffff;
+
+    text-shadow:
+        0 0 8px rgba(255, 255, 255, 0.25),
+        0 0 16px rgba(255, 45, 141, 0.25),
+        0 0 22px rgba(23, 201, 255, 0.20);
+}
+
+.winner-subtitle {
+    margin: 14px auto 24px;
+    max-width: 400px;
+
+    color: #cfd7e8;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.winner-disc {
+    position: relative;
+
+    width: 118px;
+    height: 118px;
+
+    margin: 0 auto 26px;
+
+    border-radius: 50%;
+
+    background:
+        repeating-radial-gradient(
+            circle,
+            #121820 0 5px,
+            #05070a 6px 11px
+        );
+
+    box-shadow:
+        0 0 0 2px rgba(255,255,255,0.04),
+        0 0 18px rgba(23, 201, 255, 0.18),
+        0 0 28px rgba(255, 45, 141, 0.18);
+
+    animation:
+    winnerSpin 6s linear infinite,
+    winnerVibrate 0.35s ease-in-out infinite alternate;
+}
+
+.winner-disc-inner {
+    position: absolute;
+    inset: 33px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            #f4f7ff 0 35%,
+            #d4d8e4 36% 72%,
+            #8e96a8 73% 100%
+        );
+}
+
+.winner-disc-hole {
+    position: absolute;
+    inset: 50px;
+
+    border-radius: 50%;
+    background: #050505;
+}
+
+@keyframes winnerSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+ 
+@keyframes winnerVibrate {
+    from {
+        scale: 1;
+    }
+
+    to {
+        scale: 1.07;
+    }
+}
+.winner-button {
+    min-width: 250px;
+    min-height: 58px;
+
+    padding: 0 28px;
+
+    border: none;
+    border-radius: 999px;
+
+    color: white;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            90deg,
+            #7138f5,
+            #b42ed8,
+            #ff2d8d
+        );
+
+    box-shadow:
+        0 12px 28px rgba(137, 56, 255, 0.24),
+        0 10px 26px rgba(255, 45, 141, 0.22);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.winner-button:hover {
+    transform: translateY(-2px) scale(1.02);
+
+    box-shadow:
+        0 14px 34px rgba(137, 56, 255, 0.32),
+        0 12px 30px rgba(255, 45, 141, 0.30);
+}
+
+.winner-button:active {
+    transform: scale(0.98);
+}
+
+.winner-glow {
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    filter: blur(45px);
+    opacity: 0.20;
+    pointer-events: none;
+}
+
+.winner-glow-left {
+    top: -30px;
+    left: -40px;
+    background: rgba(23, 201, 255, 0.95);
+}
+
+.winner-glow-right {
+    right: -40px;
+    bottom: -30px;
+    background: rgba(255, 45, 141, 0.95);
+}
+
+/* SOLO PANTALLA DE INICIO SIN SCROLL */
+
+#homeScreen {
+    width: min(92vw, 1080px);
+
+    height: calc(100vh - 48px);
+    min-height: 0;
+
+    margin: auto;
+
+    overflow: hidden;
+
+    justify-content: center;
+    align-items: center;
+}
+
+/* ==================================================
+   SLOT CON BOTÓN + 
+================================================== */
+
+.timeline-slot {
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    color: white;
+
+    border:
+        2px dashed
+        rgba(255, 255, 255, 0.28);
+
+    background:
+        rgba(255, 255, 255, 0.025);
+
+    transition:
+        border-color 0.25s ease,
+        background 0.25s ease,
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+/* CÍRCULO DEL + */
+
+.slot-plus {
+    width: 58px;
+    height: 58px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    font-size: 42px;
+    font-weight: 300;
+    line-height: 1;
+
+    color: #ffffff;
+
+    border:
+        2px solid
+        rgba(186, 108, 255, 0.90);
+
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            rgba(23, 201, 255, 0.16),
+            rgba(137, 56, 255, 0.12) 45%,
+            rgba(255, 45, 141, 0.10) 100%
+        );
+
+    box-shadow:
+        0 0 8px
+        rgba(23, 201, 255, 0.28),
+
+        0 0 14px
+        rgba(137, 56, 255, 0.28),
+
+        0 0 20px
+        rgba(255, 45, 141, 0.18);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+
+/* HOVER DEL SLOT */
+
+.timeline-slot:hover {
+    border-color:
+        rgba(255, 45, 141, 0.75);
+
+    background:
+        rgba(255, 45, 141, 0.05);
+
+    transform:
+        translateY(-3px);
+}
+
+
+/* HOVER DEL + */
+
+.timeline-slot:hover .slot-plus {
+    transform:
+        scale(1.08);
+
+    border-color:
+        #ff6fc2;
+
+    box-shadow:
+        0 0 10px
+        rgba(23, 201, 255, 0.45),
+
+        0 0 18px
+        rgba(137, 56, 255, 0.45),
+
+        0 0 28px
+        rgba(255, 45, 141, 0.35);
+}
+
+
+/* CUANDO EL SLOT ESTÁ SELECCIONADO */
+
+.timeline-slot.selected {
+    border-color:
+        #ff2d8d;
+
+    background:
+        rgba(255, 45, 141, 0.08);
+
+    box-shadow:
+        0 0 16px
+        rgba(255, 45, 141, 0.16);
+}
+
+.timeline-slot.selected .slot-plus {
+    transform:
+        scale(1.10);
+
+    border-color:
+        #ff5fb3;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255, 45, 141, 0.24),
+            rgba(137, 56, 255, 0.18)
+        );
+
+    box-shadow:
+        0 0 12px
+        rgba(255, 45, 141, 0.55),
+
+        0 0 24px
+        rgba(137, 56, 255, 0.35);
+}
+
+#checkButton {
+    font-family: "Orbitron", sans-serif;
+
+    font-size: 15px;
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    color: #f7eaff;
+
+    text-shadow:
+        0 0 5px rgba(255, 255, 255, 0.35),
+        0 0 10px rgba(137, 56, 255, 0.35),
+        0 0 16px rgba(255, 45, 141, 0.28);
+}
+
+#checkButton:not(:disabled) {
+    color: #ffffff;
+
+    text-shadow:
+        0 0 6px rgba(255, 255, 255, 0.55),
+        0 0 12px rgba(137, 56, 255, 0.55),
+        0 0 20px rgba(255, 45, 141, 0.40);
+}
+
+/* ==================================================
+   BOTÓN CONTINUAR ESTILO HITSTER
+================================================== */
+
+#continueButton {
+    font-family: "Orbitron", sans-serif;
+
+    font-size: 16px;
+    font-weight: 800;
+
+    letter-spacing: 4px;
+
+    text-transform: uppercase;
+
+    color: #ffffff;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.20);
+
+    background:
+        linear-gradient(
+            90deg,
+            #7a36ff,
+            #b72fd8,
+            #ff2d8d
+        );
+
+    box-shadow:
+        0 0 10px
+        rgba(137, 56, 255, 0.30),
+
+        0 0 20px
+        rgba(255, 45, 141, 0.25),
+
+        0 10px 26px
+        rgba(0, 0, 0, 0.25);
+
+    text-shadow:
+        0 0 5px
+        rgba(255, 255, 255, 0.60),
+
+        0 0 10px
+        rgba(137, 56, 255, 0.55),
+
+        0 0 16px
+        rgba(255, 45, 141, 0.45);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+}
+
+#continueButton:hover {
+    transform:
+        translateY(-2px)
+        scale(1.02);
+
+    filter:
+        brightness(1.08);
+
+    box-shadow:
+        0 0 14px
+        rgba(137, 56, 255, 0.50),
+
+        0 0 28px
+        rgba(255, 45, 141, 0.40),
+
+        0 14px 30px
+        rgba(0, 0, 0, 0.30);
+}
+
+#continueButton:active {
+    transform:
+        scale(0.98);
+}
+
+/* ==================================================
+   RESULTADO COMPLETO SIN SCROLL
+================================================== */
+
+#resultScreen {
+    height: calc(100vh - 48px);
+    min-height: 0;
+
+    padding: 28px 34px;
+
+    justify-content: center;
+
+    overflow: hidden;
+}
+
+
+/* TÍTULO */
+
+#resultScreen h2 {
+    margin: 0 0 22px;
+
+    font-size: clamp(
+        30px,
+        4.5vh,
+        52px
+    );
+}
+
+
+/* TARJETA */
+
+#resultScreen .result-card {
+    width: min(100%, 300px);
+
+    padding: 16px;
+}
+
+
+/* PORTADA */
+
+#resultScreen .result-cover {
+    height: clamp(
+        150px,
+        27vh,
+        180px
+    );
+}
+
+
+/* NOMBRE DE LA CANCIÓN */
+
+#resultScreen .result-card h3 {
+    margin: 14px 0 4px;
+
+    font-size: 18px;
+}
+
+
+/* ARTISTA */
+
+#resultScreen .result-card p {
+    font-size: 14px;
+}
+
+
+/* AÑO */
+
+#resultScreen .result-card strong {
+    margin-top: 8px;
+
+    font-size: 30px;
+}
+
+
+/* CORRECTO / INCORRECTO */
+
+#resultScreen .result-message {
+    margin-top: 20px;
+
+    font-size: 28px;
+}
+
+
+/* EXPLICACIÓN */
+
+#resultScreen #resultExplanation {
+    margin: 12px 0 16px;
+
+    font-size: 15px;
+}
+
+
+/* BOTÓN CONTINUAR */
+
+#resultScreen #continueButton {
+    min-height: 54px;
+
+    margin-top: 0;
+}
+
+/* ==================================================
+   BORDE DEL RESULTADO SEGÚN RESPUESTA
+================================================== */
+
+#resultScreen {
+    transition:
+        border-color 0.4s ease,
+        box-shadow 0.4s ease;
+}
+
+
+/* CORRECTO = VERDE */
+
+#resultScreen.result-correct {
+    border:
+        1px solid
+        rgba(51, 230, 161, 0.85);
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.50),
+
+        0 0 12px rgba(51, 230, 161, 0.45),
+
+        0 0 28px rgba(51, 230, 161, 0.30),
+
+        0 0 55px rgba(51, 230, 161, 0.18),
+
+        inset 0 0 22px rgba(51, 230, 161, 0.05);
+}
+
+
+/* INCORRECTO = ROJO */
+
+#resultScreen.result-incorrect {
+    border:
+        1px solid
+        rgba(255, 95, 119, 0.90);
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.50),
+
+        0 0 12px rgba(255, 95, 119, 0.50),
+
+        0 0 28px rgba(255, 95, 119, 0.32),
+
+        0 0 55px rgba(255, 95, 119, 0.20),
+
+        inset 0 0 22px rgba(255, 95, 119, 0.05);
+}
+
+/* TRANSICIÓN MÁS FLUIDA */
+
+.screen-transition-out {
+    animation:
+        screenEpicOut
+        0.45s
+        ease
+        forwards;
+
+    will-change:
+        transform,
+        opacity;
+}
+
+.screen-transition-in {
+    animation:
+        screenEpicIn
+        0.55s
+        ease-out
+        forwards;
+
+    will-change:
+        transform,
+        opacity;
+}
+
+
+/* SALE LA PANTALLA */
+
+@keyframes screenEpicOut {
+
+    0% {
+        opacity: 1;
+        transform:
+            scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform:
+            scale(1.06);
+    }
+}
+
+
+/* ENTRA LA PANTALLA DEL JUEGO */
+
+@keyframes screenEpicIn {
+
+    0% {
+        opacity: 0;
+
+        transform:
+            scale(0.96)
+            translateY(12px);
+    }
+
+    100% {
+        opacity: 1;
+
+        transform:
+            scale(1)
+            translateY(0);
+    }
+}
+
+
+/* DESTELLO NEÓN */
+
+body::marker {
+    display: none;
+}
+
+.epic-flash {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 99999;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(255,255,255,0.95) 0%,
+            rgba(137,56,255,0.55) 18%,
+            rgba(255,45,141,0.30) 38%,
+            rgba(23,201,255,0.12) 58%,
+            transparent 75%
+        );
+
+    animation:
+        epicFlash
+        0.65s
+        ease-out
+        forwards;
+}
+
+@keyframes epicFlash {
+
+    0% {
+        opacity: 0;
+    }
+
+    35% {
+        opacity: 0.85;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes turnPulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.08);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.turn-pulse {
+    animation: turnPulse 1s ease-in-out 3;
+}
+
+
