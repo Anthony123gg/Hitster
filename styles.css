@@ -3507,48 +3507,60 @@ body::marker {
 }
 
 /* ==================================================
-   📱 ADAPTACIÓN PARA CELULARES
-   PANTALLA DE PARTICIPANTES
+   PARTICIPANTES - ADAPTACIÓN PARA CELULARES
    ================================================== */
 
 @media (max-width: 600px) {
 
-    /* Contenedor de selección de participantes */
     .participants-options {
         width: 100%;
-        max-width: 340px;
-        margin: 0 auto;
+        max-width: 360px;
+        margin: 20px auto 0;
+
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+
         padding: 0 15px;
         box-sizing: border-box;
     }
 
-    /* Opciones 2, 3, 4 y 5 participantes */
-    .participant-option {
+    .participant-card {
         width: 100%;
+        min-height: 65px;
+
+        padding: 12px 8px;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        border-radius: 14px;
+
         box-sizing: border-box;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        text-align: center;
+
+        white-space: normal;
+        word-break: normal;
     }
 
-    /* Formulario donde aparecen los nombres */
-    .players-form {
-        width: 100%;
-        max-width: 340px;
-        margin: 0 auto;
-        padding: 0 15px;
-        box-sizing: border-box;
+}
+@media (max-width: 380px) {
+
+    .participants-options {
+        max-width: 330px;
+        gap: 10px;
+        padding: 0 10px;
     }
 
-    /* Inputs de nombres */
-    .players-form input {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-    }
-
-    /* Botones dentro de esta pantalla */
-    .participants-options button,
-    .players-form button {
-        max-width: 100%;
-        box-sizing: border-box;
+    .participant-card {
+        min-height: 60px;
+        font-size: 11px;
+        padding: 10px 6px;
     }
 
 }
