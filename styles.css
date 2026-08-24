@@ -3506,16 +3506,17 @@ body::marker {
     animation: turnPulse 1s ease-in-out 3;
 }
 
-/* ==================================================
-   PARTICIPANTES - ADAPTACIÓN PARA CELULARES
-   ================================================== */
+/* =========================================
+   PARTICIPANTES - SOLO CELULAR
+   ========================================= */
 
 @media (max-width: 600px) {
 
-    .participants-options {
+    #participantsOptions {
         width: 100%;
         max-width: 360px;
-        margin: 20px auto 0;
+        margin-left: auto;
+        margin-right: auto;
 
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -3525,16 +3526,11 @@ body::marker {
         box-sizing: border-box;
     }
 
-    .participant-card {
+    #participantsOptions .participant-card {
         width: 100%;
         min-height: 65px;
 
-        padding: 12px 8px;
-
-        font-size: 12px;
-        font-weight: 700;
-
-        border-radius: 14px;
+        padding: 10px 6px;
 
         box-sizing: border-box;
 
@@ -3544,23 +3540,29 @@ body::marker {
 
         text-align: center;
 
-        white-space: normal;
-        word-break: normal;
-    }
+        font-size: 12px;
+        line-height: 1.2;
 
+        white-space: normal;
+    }
 }
+
+
+/* =========================================
+   CELULARES PEQUEÑOS
+   ========================================= */
+
 @media (max-width: 380px) {
 
-    .participants-options {
+    #participantsOptions {
         max-width: 330px;
         gap: 10px;
         padding: 0 10px;
     }
 
-    .participant-card {
+    #participantsOptions .participant-card {
         min-height: 60px;
         font-size: 11px;
-        padding: 10px 6px;
     }
 
 }
