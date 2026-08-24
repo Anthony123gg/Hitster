@@ -3506,4 +3506,159 @@ body::marker {
     animation: turnPulse 1s ease-in-out 3;
 }
 
-v
+/* =========================================================
+   📱 MÓVIL - FLUJO DE PANTALLA DE INICIO
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    /* =========================================
+       ESTADO INICIAL
+       SOLO COMENZAR + CÓMO JUGAR
+       ========================================= */
+
+    #participantsOptions {
+        display: none !important;
+    }
+
+    #playersForm {
+        display: none !important;
+    }
+
+    #playGameButton {
+        display: none !important;
+    }
+
+
+    /* =========================================
+       DESPUÉS DE PRESIONAR COMENZAR
+       APARECEN LOS PARTICIPANTES
+       ========================================= */
+
+    #participantsOptions.show {
+        display: grid !important;
+
+        width: 100%;
+        max-width: 360px;
+
+        margin: 25px auto 0;
+        padding: 0 15px;
+
+        box-sizing: border-box;
+
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+
+    #participantsOptions.show .participant-card {
+        width: 100%;
+        min-height: 65px;
+
+        padding: 10px 6px;
+
+        box-sizing: border-box;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        text-align: center;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        line-height: 1.2;
+
+        white-space: normal;
+    }
+
+
+    /* =========================================
+       DESPUÉS DE ELEGIR PARTICIPANTES
+       APARECE INGRESAR NOMBRES
+       ========================================= */
+
+    #playersForm.show {
+        display: flex !important;
+
+        width: 100%;
+        max-width: 360px;
+
+        margin: 25px auto 0;
+
+        padding: 0 15px;
+
+        box-sizing: border-box;
+
+        flex-direction: column;
+        align-items: center;
+    }
+
+
+    #playersForm.show #playersInputs {
+        width: 100%;
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 10px;
+
+        box-sizing: border-box;
+    }
+
+
+    #playersForm.show .player-name-input {
+        width: 100%;
+
+        min-height: 48px;
+
+        box-sizing: border-box;
+
+        font-size: 15px;
+    }
+
+
+    /* =========================================
+       BOTÓN JUGAR
+       ========================================= */
+
+    #playersForm.show #playGameButton.show {
+        display: flex !important;
+
+        width: 100%;
+        max-width: 330px;
+
+        margin-top: 15px;
+
+        justify-content: center;
+        align-items: center;
+    }
+
+
+    /* =========================================
+       CELULARES MUY PEQUEÑOS
+       ========================================= */
+
+    @media (max-width: 380px) {
+
+        #participantsOptions.show {
+            max-width: 330px;
+            gap: 10px;
+            padding: 0 10px;
+        }
+
+        #participantsOptions.show .participant-card {
+            min-height: 60px;
+            font-size: 11px;
+        }
+
+        #playersForm.show {
+            max-width: 330px;
+            padding: 0 10px;
+        }
+
+    }
+
+}
