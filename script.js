@@ -1,6 +1,36 @@
+// ===============================
+// CONEXIÓN CON SUPABASE
+// ===============================
+
+const SUPABASE_URL = "https://keeieiomuwsmucvusutb.supabase.co";
+const SUPABASE_KEY = "sb_publishable_za_9TrxyouZuD_0thf7jVw_NiGwAHTF";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+async function probarSupabase() {
+    const { data, error } = await supabaseClient
+        .from("games")
+        .select("*")
+        .limit(1);
+
+    if (error) {
+        console.error("❌ Error conectando con Supabase:", error);
+        return;
+    }
+
+    console.log("✅ HITSTER está conectado con Supabase");
+    console.log("Datos:", data);
+}
+
+probarSupabase();
+
 // ==================================================
 // LISTA DE CANCIONES
 // ==================================================
+
 
 const songs = [
 
@@ -837,6 +867,16 @@ const resultScreen =
 const startButton =
     document.getElementById("startButton");
 
+    const onlineButton = document.getElementById("onlineButton");
+const onlineOptions = document.getElementById("onlineOptions");
+const createGameButton = document.getElementById("createGameButton");
+const joinGameButton = document.getElementById("joinGameButton");
+const onlineLobbyScreen = document.getElementById("onlineLobbyScreen");
+const roomCodeDisplay = document.getElementById("roomCodeDisplay");
+const onlinePlayersList = document.getElementById("onlinePlayersList");
+const lobbyMessage = document.getElementById("lobbyMessage");
+const startOnlineButton = document.getElementById("startOnlineButton");
+
     const participantsOptions =
     document.getElementById("participantsOptions");
     
@@ -1120,6 +1160,50 @@ function shuffle(array) {
     }
 
     return copy;
+}
+
+function generarCodigoSala() {
+    const caracteres = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let codigo = "";
+
+    for (let i = 0; i < 5; i++) {
+        const posicion = Math.floor(Math.random() * caracteres.length);
+        codigo += caracteres[posicion];
+    }
+
+    return codigo;
+}
+
+async function crearPartida() {
+
+    const roomCode = generarCodigoSala();
+
+    const { data, error } = await supabaseClient
+        .from("games")
+        .insert({
+            room_code: roomCode,
+            status: "waiting"
+        })
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Error creando partida:", error);
+        alert("No se pudo crear la partida.");
+        return;
+    }
+
+    console.log("Partida creada:", data);
+
+    // Mostrar código en la sala
+    roomCodeDisplay.textContent = data.room_code;
+
+    // Mostrar sala de espera
+    screens.forEach(function(screen) {
+        screen.classList.remove("active");
+    });
+
+    onlineLobbyScreen.classList.add("active");
 }
 
 
@@ -2105,3 +2189,55 @@ winnerButton.addEventListener(
 
     }
 );
+
+onlineButton.addEventListener("click", function() {
+
+    // Ocultar los botones principales
+    startButton.style.display = "none";
+    howButton.style.display = "none";
+
+    // Ocultar JUGAR ONLINE
+    onlineButton.classList.add("online-hidden");
+
+    // Mostrar opciones online
+    onlineOptions.style.display = "grid";
+});
+
+createGameButton.addEventListener("click", function() {
+    crearPartida();
+});
+
+joinGameButton.addEventListener("click", async function() {
+
+    const roomCode = prompt("🎵 Ingresa el código de la partida:");
+
+    if (!roomCode) {
+        return;
+    }
+
+    const codigo = roomCode.trim().toUpperCase();
+
+    const { data, error } = await supabaseClient
+        .from("games")
+        .select("*")
+        .eq("room_code", codigo)
+        .maybeSingle();
+
+    if (error) {
+        console.error("Error buscando partida:", error);
+        alert("❌ Ocurrió un error al buscar la partida.");
+        return;
+    }
+
+    if (!data) {
+        alert("❌ La partida no existe.\n\nVerifica el código.");
+        return;
+    }
+
+    console.log("✅ Partida encontrada:", data);
+
+    alert(
+        "✅ PARTIDA ENCONTRADA\n\n" +
+        "Código: " + data.room_code
+    );
+});
