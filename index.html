@@ -116,6 +116,24 @@
             >
                 ⓘ CÓMO JUGAR
             </button>
+
+            <button id="onlineButton" class="online-button">
+    <span class="online-icon"></span>
+    <span>JUGAR ONLINE</span>
+</button>
+            <div id="onlineOptions">
+
+    <button id="createGameButton" class="online-action create-game">
+        <span class="online-icon">＋</span>
+        <span>CREAR PARTIDA</span>
+    </button>
+
+    <button id="joinGameButton" class="online-action join-game">
+        <span class="online-icon">➜</span>
+        <span>UNIRSE A PARTIDA</span>
+    </button>
+
+</div>
             
             <div id="participantsOptions" class="participants-options">
 
@@ -154,6 +172,51 @@
 </div>
 
         </section>
+
+        <!-- =========================================
+     SALA DE ESPERA ONLINE
+     ========================================= -->
+<section id="onlineLobbyScreen" class="screen">
+
+    <div class="online-lobby">
+
+        <div class="lobby-title">
+            <span>🎵</span>
+            SALA DE ESPERA
+        </div>
+
+        <div class="room-code-label">
+            CÓDIGO DE SALA
+        </div>
+
+        <div id="roomCodeDisplay" class="room-code">
+            A7K92
+        </div>
+
+        <div class="players-title">
+            JUGADORES
+        </div>
+
+        <div id="onlinePlayersList" class="online-players-list">
+
+            <div class="online-player">
+                <span class="player-number">1</span>
+                <span>Esperando jugador...</span>
+            </div>
+
+        </div>
+
+        <div id="lobbyMessage" class="lobby-message">
+            Esperando jugadores...
+        </div>
+
+        <button id="startOnlineButton" class="start-online-button">
+            COMENZAR PARTIDA
+        </button>
+
+    </div>
+
+</section>
 
 
         <!-- PANTALLA DEL JUEGO -->
@@ -417,6 +480,7 @@
         </button>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
 
 </body>
