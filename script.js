@@ -1087,6 +1087,9 @@ let gameSongs = [];
 
 let currentSong = null;
 
+let currentGameId = null;
+let currentPlayerName = null;
+
 let currentRound = 0;
 
 let lives = 3;
@@ -1176,8 +1179,21 @@ function generarCodigoSala() {
 
 async function crearPartida() {
 
+    const playerName = prompt("🎵 Ingresa tu nombre:");
+
+    if (!playerName) {
+        return;
+    }
+
+    const nombre = playerName.trim();
+
+    if (!nombre) {
+        return;
+    }
+
     const roomCode = generarCodigoSala();
 
+    // Crear la partida
     const { data, error } = await supabaseClient
         .from("games")
         .insert({
@@ -1189,16 +1205,46 @@ async function crearPartida() {
 
     if (error) {
         console.error("Error creando partida:", error);
-        alert("No se pudo crear la partida.");
+        alert("❌ No se pudo crear la partida.");
         return;
     }
 
-    console.log("Partida creada:", data);
+    // Guardar datos de la partida actual
+    currentGameId = data.id;
+    currentPlayerName = nombre;
 
-    // Mostrar código en la sala
+    // Agregar al creador como jugador 1
+    const { error: playerError } = await supabaseClient
+        .from("game_players")
+        .insert({
+            game_id: data.id,
+            player_name: nombre,
+            player_index: 0
+        });
+
+    if (playerError) {
+        console.error("Error agregando jugador:", playerError);
+        alert("❌ No se pudo agregar el jugador.");
+        return;
+    }
+
+    console.log("✅ Partida creada:", data);
+    console.log("✅ Jugador agregado:", nombre);
+
+    // Mostrar código
     roomCodeDisplay.textContent = data.room_code;
 
-    // Mostrar sala de espera
+    // Mostrar jugador
+    onlinePlayersList.innerHTML = `
+        <div class="online-player">
+            <span class="player-number">1</span>
+            <span>${nombre}</span>
+        </div>
+    `;
+
+    lobbyMessage.textContent = "Esperando jugadores...";
+
+    // Cambiar a sala de espera
     screens.forEach(function(screen) {
         screen.classList.remove("active");
     });
@@ -2217,27 +2263,117 @@ joinGameButton.addEventListener("click", async function() {
 
     const codigo = roomCode.trim().toUpperCase();
 
-    const { data, error } = await supabaseClient
+    // Buscar la partida
+    const { data: game, error: gameError } = await supabaseClient
         .from("games")
         .select("*")
         .eq("room_code", codigo)
         .maybeSingle();
 
-    if (error) {
-        console.error("Error buscando partida:", error);
+    if (gameError) {
+        console.error("Error buscando partida:", gameError);
         alert("❌ Ocurrió un error al buscar la partida.");
         return;
     }
 
-    if (!data) {
-        alert("❌ La partida no existe.\n\nVerifica el código.");
+    if (!game) {
+        alert("❌ La partida no existe.");
         return;
     }
 
-    console.log("✅ Partida encontrada:", data);
+    // Pedir nombre
+    const playerName = prompt("👤 Ingresa tu nombre:");
 
-    alert(
-        "✅ PARTIDA ENCONTRADA\n\n" +
-        "Código: " + data.room_code
-    );
+    if (!playerName) {
+        return;
+    }
+
+    const nombre = playerName.trim();
+
+    if (!nombre) {
+        return;
+    }
+
+    // Ver cuántos jugadores hay
+    const { data: existingPlayers, error: playersError } =
+        await supabaseClient
+            .from("game_players")
+            .select("*")
+            .eq("game_id", game.id)
+            .order("player_index", { ascending: true });
+
+    if (playersError) {
+        console.error("Error obteniendo jugadores:", playersError);
+        alert("❌ No se pudieron obtener los jugadores.");
+        return;
+    }
+
+    // Máximo 5 jugadores
+    if (existingPlayers.length >= 5) {
+        alert("❌ Esta partida ya está llena.");
+        return;
+    }
+
+    const playerIndex = existingPlayers.length;
+
+    // Agregar jugador
+    const { error: insertError } = await supabaseClient
+        .from("game_players")
+        .insert({
+            game_id: game.id,
+            player_name: nombre,
+            player_index: playerIndex
+        });
+
+    if (insertError) {
+        console.error("Error agregando jugador:", insertError);
+        alert("❌ No se pudo entrar a la partida.");
+        return;
+    }
+
+    // Guardar datos actuales
+    currentGameId = game.id;
+    currentPlayerName = nombre;
+
+    console.log("✅ Entraste a la partida:", game.room_code);
+    console.log("✅ Jugador:", nombre);
+
+    // Mostrar código
+    roomCodeDisplay.textContent = game.room_code;
+
+    // Mostrar jugadores
+    onlinePlayersList.innerHTML = "";
+
+    existingPlayers.forEach(function(player) {
+
+        onlinePlayersList.innerHTML += `
+            <div class="online-player">
+                <span class="player-number">
+                    ${player.player_index + 1}
+                </span>
+
+                <span>${player.player_name}</span>
+            </div>
+        `;
+    });
+
+    // Agregar el jugador actual
+    onlinePlayersList.innerHTML += `
+        <div class="online-player">
+            <span class="player-number">
+                ${playerIndex + 1}
+            </span>
+
+            <span>${nombre}</span>
+        </div>
+    `;
+
+    lobbyMessage.textContent = "Esperando jugadores...";
+
+    // Mostrar sala
+    screens.forEach(function(screen) {
+        screen.classList.remove("active");
+    });
+
+    onlineLobbyScreen.classList.add("active");
 });
