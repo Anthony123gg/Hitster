@@ -877,6 +877,170 @@ const onlinePlayersList = document.getElementById("onlinePlayersList");
 const lobbyMessage = document.getElementById("lobbyMessage");
 const startOnlineButton = document.getElementById("startOnlineButton");
 
+startOnlineButton.addEventListener("click", async function() {
+
+    if (!isGameHost) {
+        alert("Solo el creador de la partida puede comenzar.");
+        return;
+    }
+
+    console.log("🎮 Preparando partida online...");
+
+    // =========================================
+    // 1. CREAR MAZO ÚNICO PARA TODOS
+    // =========================================
+
+    const deck = shuffle(
+        songs.map(function(song, index) {
+            return index;
+        })
+    );
+
+    // =========================================
+    // 2. OBTENER JUGADORES
+    // =========================================
+
+    const { data: onlinePlayers, error: playersError } =
+        await supabaseClient
+            .from("game_players")
+            .select("*")
+            .eq("game_id", currentGameId)
+            .order("player_index", {
+                ascending: true
+            });
+
+    if (playersError) {
+
+        console.error(
+            "Error obteniendo jugadores:",
+            playersError
+        );
+
+        alert("❌ No se pudieron cargar los jugadores.");
+        return;
+    }
+
+    if (onlinePlayers.length < 2) {
+
+        alert(
+            "❌ Se necesitan al menos 2 jugadores."
+        );
+
+        return;
+    }
+
+    // =========================================
+    // 3. DAR UNA CANCIÓN INICIAL A CADA JUGADOR
+    // =========================================
+
+    let deckPosition = 0;
+
+    for (const player of onlinePlayers) {
+
+        const firstSongId =
+            deck[deckPosition];
+
+        deckPosition++;
+
+        const { error } =
+            await supabaseClient
+                .from("game_players")
+                .update({
+                    timeline_song_ids: [firstSongId],
+                    score: 0,
+                    streak: 0
+                })
+                .eq("id", player.id);
+
+        if (error) {
+
+            console.error(
+                "Error preparando jugador:",
+                error
+            );
+
+            alert(
+                "❌ No se pudo preparar a los jugadores."
+            );
+
+            return;
+        }
+    }
+
+    // =========================================
+    // 4. ELEGIR PRIMERA CANCIÓN DE LA PARTIDA
+    // =========================================
+
+    const firstSongId =
+        deck[deckPosition];
+
+    deckPosition++;
+
+    // =========================================
+    // 5. GUARDAR TODO EN SUPABASE
+    // =========================================
+
+    const { error: gameError } =
+        await supabaseClient
+            .from("games")
+            .update({
+
+                song_deck: deck,
+
+                deck_position: deckPosition,
+
+                current_song_id: firstSongId,
+
+                current_player_index: 0
+
+            })
+            .eq("id", currentGameId);
+
+    if (gameError) {
+
+        console.error(
+            "Error preparando partida:",
+            gameError
+        );
+
+        alert(
+            "❌ No se pudo preparar la partida."
+        );
+
+        return;
+    }
+
+    // =========================================
+    // 6. AHORA SÍ: COMENZAR PARTIDA
+    // =========================================
+
+    const { error: statusError } =
+        await supabaseClient
+            .from("games")
+            .update({
+                status: "playing"
+            })
+            .eq("id", currentGameId);
+
+    if (statusError) {
+
+        console.error(
+            "Error comenzando partida:",
+            statusError
+        );
+
+        alert(
+            "❌ No se pudo comenzar la partida."
+        );
+
+        return;
+    }
+
+    console.log("🎮 PARTIDA ONLINE INICIADA");
+    console.log("🎵 Mazo:", deck);
+    console.log("🎵 Primera canción:", firstSongId);
+});
+
     const participantsOptions =
     document.getElementById("participantsOptions");
     
@@ -1089,6 +1253,9 @@ let currentSong = null;
 
 let currentGameId = null;
 let currentPlayerName = null;
+let playersChannel = null;
+let isGameHost = false;
+let isOnlineGame = false;
 
 let currentRound = 0;
 
@@ -1212,6 +1379,9 @@ async function crearPartida() {
     // Guardar datos de la partida actual
     currentGameId = data.id;
     currentPlayerName = nombre;
+    isGameHost = true;
+    isOnlineGame = true;
+    startOnlineButton.style.display = "block";
 
     // Agregar al creador como jugador 1
     const { error: playerError } = await supabaseClient
@@ -1250,8 +1420,607 @@ async function crearPartida() {
     });
 
     onlineLobbyScreen.classList.add("active");
+
+escucharJugadores(currentGameId);
+escucharPartida(currentGameId);
 }
 
+// =========================================
+// ACTUALIZAR JUGADORES EN TIEMPO REAL
+// =========================================
+
+function actualizarListaJugadores(players) {
+
+    onlinePlayersList.innerHTML = "";
+
+    players.forEach(function(player) {
+
+        onlinePlayersList.innerHTML += `
+            <div class="online-player">
+                <span class="player-number">
+                    ${player.player_index + 1}
+                </span>
+
+                <span>${player.player_name}</span>
+            </div>
+        `;
+    });
+
+    if (players.length < 2) {
+        lobbyMessage.textContent = "Esperando jugadores...";
+    } else {
+        lobbyMessage.textContent =
+            players.length + " jugadores conectados";
+    }
+}
+
+async function escucharJugadores(gameId) {
+
+    // =========================================
+    // ELIMINAR CANAL ANTERIOR
+    // =========================================
+
+    if (playersChannel) {
+
+        await supabaseClient.removeChannel(
+            playersChannel
+        );
+
+        playersChannel = null;
+    }
+
+
+    // =========================================
+    // FUNCIÓN PARA CARGAR JUGADORES
+    // =========================================
+
+    async function cargarLista() {
+
+        const { data, error } =
+            await supabaseClient
+                .from("game_players")
+                .select("*")
+                .eq("game_id", gameId)
+                .order(
+                    "player_index",
+                    { ascending: true }
+                );
+
+        if (error) {
+
+            console.error(
+                "❌ Error cargando jugadores:",
+                error
+            );
+
+            return;
+        }
+
+
+        console.log(
+            "👥 Jugadores actuales:",
+            data
+        );
+
+
+        // Si estamos en el lobby
+        if (
+            onlineLobbyScreen &&
+            onlineLobbyScreen.classList.contains("active")
+        ) {
+
+            actualizarListaJugadores(data);
+        }
+
+
+        // Si estamos jugando
+        if (
+            gameScreen.classList.contains("active")
+        ) {
+
+            await cargarJugadoresOnline();
+
+            const myPlayer =
+                players.find(function(player) {
+
+                    return (
+                        player.name ===
+                        currentPlayerName
+                    );
+
+                });
+
+
+            if (!myPlayer) {
+                return;
+            }
+
+
+            timelineSongs =
+                myPlayer.timelineSongs;
+
+
+            renderTimeline();
+        }
+    }
+
+
+    // =========================================
+    // CARGAR LISTA INMEDIATAMENTE
+    // =========================================
+
+    await cargarLista();
+
+
+    // =========================================
+    // CREAR CANAL REALTIME
+    // =========================================
+
+    playersChannel =
+        supabaseClient
+            .channel(
+                "game-players-" + gameId
+            )
+
+            .on(
+                "postgres_changes",
+                {
+                    event: "*",
+                    schema: "public",
+                    table: "game_players",
+                    filter:
+                        "game_id=eq." + gameId
+                },
+
+                async function(payload) {
+
+                    console.log(
+                        "🔄 Cambio detectado en jugadores:",
+                        payload
+                    );
+
+                    await cargarLista();
+                }
+            )
+
+            .subscribe(function(status) {
+
+                console.log(
+                    "📡 Realtime jugadores:",
+                    status
+                );
+
+            });
+}
+
+// =========================================
+// ACTUALIZAR TURNO ONLINE
+// =========================================
+
+async function actualizarTurnoOnline(playerIndex) {
+
+    currentPlayerIndex = playerIndex;
+
+    console.log(
+        "🔄 Actualizando turno online:",
+        playerIndex
+    );
+
+    // Obtener nuevamente la partida
+    const { data: game, error: gameError } =
+        await supabaseClient
+            .from("games")
+            .select("*")
+            .eq("id", currentGameId)
+            .single();
+
+    if (gameError) {
+
+        console.error(
+            "❌ Error obteniendo partida:",
+            gameError
+        );
+
+        return;
+    }
+
+    // Recargar jugadores y sus tarjetas
+    await cargarJugadoresOnline();
+
+    // Jugador al que le toca
+    const currentPlayer =
+        players[currentPlayerIndex];
+
+    if (!currentPlayer) {
+
+        console.error(
+            "❌ No se encontró el jugador:",
+            currentPlayerIndex
+        );
+
+        return;
+    }
+
+    // Su línea de tiempo
+    timelineSongs =
+        currentPlayer.timelineSongs;
+
+    // Canción actual
+    const songId =
+        game.current_song_id;
+
+    currentSong =
+        songs[songId];
+
+    if (!currentSong) {
+
+        console.error(
+            "❌ No se encontró la canción:",
+            songId
+        );
+
+        return;
+    }
+
+    // ==============================
+    // ACTUALIZAR INTERFAZ
+    // ==============================
+
+    turnText.textContent =
+        "TURNO DE " +
+        currentPlayer.name.toUpperCase();
+
+    turnText.classList.remove("turn-pulse");
+
+    void turnText.offsetWidth;
+
+    turnText.classList.add("turn-pulse");
+
+    // ==============================
+    // REINICIAR RESPUESTA
+    // ==============================
+
+    selectedPosition = null;
+
+    checkButton.disabled = true;
+
+    // ==============================
+    // CARGAR NUEVA CANCIÓN
+    // ==============================
+
+    audioPlayer.pause();
+
+    audioPlayer.src =
+        currentSong.audio;
+
+    audioPlayer.currentTime = 0;
+
+    playMusicButton.textContent = "▶";
+
+    equalizer.classList.remove("playing");
+
+    playerCard.classList.remove("playing");
+
+    gameScreen.classList.remove("music-playing");
+
+    // ==============================
+    // MOSTRAR NUEVAS TARJETAS
+    // ==============================
+
+    renderTimeline();
+
+    console.log(
+        "🎵 Nueva canción:",
+        currentSong.title
+    );
+
+    console.log(
+        "📅 Año:",
+        currentSong.year
+    );
+
+    console.log(
+        "👤 Turno de:",
+        currentPlayer.name
+    );
+}
+
+async function cargarJugadoresOnline() {
+
+    const { data, error } = await supabaseClient
+        .from("game_players")
+        .select("*")
+        .eq("game_id", currentGameId)
+        .order("player_index", {
+            ascending: true
+        });
+
+    if (error) {
+
+        console.error(
+            "Error cargando jugadores:",
+            error
+        );
+
+        return;
+    }
+
+    players = data.map(function(player) {
+
+        const songIds =
+            player.timeline_song_ids || [];
+
+        const timeline =
+            songIds.map(function(songId) {
+
+                return songs[songId];
+
+            }).filter(Boolean);
+
+        return {
+
+            id: player.id,
+
+            name: player.player_name,
+
+            playerIndex: player.player_index,
+
+            timelineSongs: timeline,
+
+            score: player.score || 0,
+
+            streak: player.streak || 0
+
+        };
+
+    });
+
+    console.log(
+        "👥 Jugadores online cargados:",
+        players
+    );
+}
+
+// =========================================
+// ENTRAR AL JUEGO ONLINE
+// =========================================
+
+async function entrarAlJuegoOnline() {
+
+    // =========================================
+    // DETENER MÚSICA DEL MENÚ
+    // =========================================
+
+    backgroundMusic.pause();
+    backgroundMusic.currentTime = 0;
+
+    console.log("🎮 Entrando al juego online...");
+
+    // =========================================
+    // OBTENER PARTIDA
+    // =========================================
+
+    const { data: game, error: gameError } =
+        await supabaseClient
+            .from("games")
+            .select("*")
+            .eq("id", currentGameId)
+            .single();
+
+    if (gameError) {
+
+        console.error(
+            "❌ Error obteniendo partida:",
+            gameError
+        );
+
+        return;
+    }
+
+    // =========================================
+    // CARGAR JUGADORES
+    // =========================================
+
+    await cargarJugadoresOnline();
+
+    // =========================================
+    // GUARDAR TURNO
+    // =========================================
+
+    currentPlayerIndex =
+        game.current_player_index || 0;
+
+    // =========================================
+    // OBTENER CANCIÓN ACTUAL
+    // =========================================
+
+    const songId =
+        game.current_song_id;
+
+    currentSong =
+        songs[songId];
+
+    if (!currentSong) {
+
+        console.error(
+            "❌ No se encontró la canción:",
+            songId
+        );
+
+        return;
+    }
+
+    // =========================================
+// OBTENER MI PROPIA LÍNEA DEL TIEMPO
+// =========================================
+
+const currentPlayer =
+    players[currentPlayerIndex];
+
+if (!currentPlayer) {
+
+    console.error(
+        "❌ No se encontró el jugador actual."
+    );
+
+    return;
+}
+
+// Buscar al jugador de ESTA computadora
+const myPlayer =
+    players.find(function(player) {
+
+        return player.name === currentPlayerName;
+
+    });
+
+if (!myPlayer) {
+
+    console.error(
+        "❌ No se encontró mi jugador."
+    );
+
+    return;
+}
+
+// Cada jugador ve SU propia línea de tiempo
+timelineSongs =
+    myPlayer.timelineSongs;
+
+    // =========================================
+    // CONFIGURAR INTERFAZ
+    // =========================================
+
+    currentRound++;
+
+    selectedPosition = null;
+
+    checkButton.disabled = true;
+
+    turnText.textContent =
+        "TURNO DE " +
+        currentPlayer.name.toUpperCase();
+
+    turnText.classList.remove("turn-pulse");
+
+    void turnText.offsetWidth;
+
+    turnText.classList.add("turn-pulse");
+
+    // =========================================
+    // CARGAR CANCIÓN
+    // =========================================
+
+    audioPlayer.pause();
+
+    audioPlayer.src =
+        currentSong.audio;
+
+    audioPlayer.currentTime = 0;
+
+    playMusicButton.textContent = "▶";
+
+    equalizer.classList.remove("playing");
+
+    playerCard.classList.remove("playing");
+
+    gameScreen.classList.remove("music-playing");
+
+    // =========================================
+    // MOSTRAR LÍNEA DEL TIEMPO
+    // =========================================
+
+    renderTimeline();
+
+    // =========================================
+    // MOSTRAR JUEGO
+    // =========================================
+
+    showScreen(gameScreen);
+
+    console.log(
+        "🎵 Canción online:",
+        currentSong.title
+    );
+
+    console.log(
+        "📅 Año:",
+        currentSong.year
+    );
+
+    console.log(
+        "👤 Turno:",
+        currentPlayer.name
+    );
+}
+// =========================================
+// ESCUCHAR CAMBIOS DE LA PARTIDA
+// =========================================
+
+function escucharPartida(gameId) {
+
+    supabaseClient
+        .channel("game-status-" + gameId)
+
+        .on(
+            "postgres_changes",
+            {
+                event: "UPDATE",
+                schema: "public",
+                table: "games",
+                filter: "id=eq." + gameId
+            },
+
+            async function(payload) {
+
+                console.log(
+                    "🔄 Cambio en partida:",
+                    payload.new
+                );
+
+                // ==========================
+                // LA PARTIDA COMENZÓ
+                // ==========================
+
+                if (
+                    payload.new.status === "playing" &&
+                    !gameScreen.classList.contains("active")
+                ) {
+
+                    currentPlayerIndex =
+                        payload.new.current_player_index;
+
+                    await entrarAlJuegoOnline();
+
+                    return;
+                }
+
+                // ==========================
+// CAMBIÓ EL TURNO
+// ==========================
+
+if (
+    payload.new.status === "playing"
+) {
+
+    console.log(
+        "🔄 Nuevo turno:",
+        payload.new.current_player_index
+    );
+
+    await entrarAlJuegoOnline();
+
+} })
+
+        .subscribe(function(status) {
+
+            console.log(
+                "📡 Estado Realtime partida:",
+                status
+            );
+
+        });
+}
 
 // ==================================================
 // INICIAR PARTIDA
@@ -1469,37 +2238,68 @@ if (
 `;
 
 
-        slot.addEventListener(
-            "click",
-            function () {
+        // =========================================
+// SOLO EL JUGADOR DEL TURNO PUEDE JUGAR
+// =========================================
 
-                const allSlots =
-                    document.querySelectorAll(
-                        ".timeline-slot"
+let puedeJugar = true;
+
+if (isOnlineGame) {
+
+    const jugadorActual =
+        players[currentPlayerIndex];
+
+    puedeJugar =
+        jugadorActual &&
+        jugadorActual.name === currentPlayerName;
+}
+
+
+// =========================================
+// CONFIGURAR SLOT
+// =========================================
+
+if (!puedeJugar) {
+
+    slot.disabled = true;
+
+    slot.classList.add(
+        "slot-disabled"
+    );
+
+} else {
+
+    slot.addEventListener(
+        "click",
+        function () {
+
+            const allSlots =
+                document.querySelectorAll(
+                    ".timeline-slot"
+                );
+
+            allSlots.forEach(
+                function (item) {
+
+                    item.classList.remove(
+                        "selected"
                     );
 
-                allSlots.forEach(
-                    function (item) {
+                }
+            );
 
-                        item.classList.remove(
-                            "selected"
-                        );
+            slot.classList.add(
+                "selected"
+            );
 
-                    }
-                );
+            selectedPosition =
+                position;
 
-
-                slot.classList.add(
-                    "selected"
-                );
-
-                selectedPosition =
-                    position;
-
-                checkButton.disabled =
-                    false;
-            }
-        );
+            checkButton.disabled =
+                false;
+        }
+    );
+}
 
 
         timelineElement.appendChild(
@@ -1582,44 +2382,255 @@ function isCorrectPosition(position) {
 // COMPROBAR RESPUESTA
 // ==================================================
 
-function checkAnswer() {
+async function checkAnswer() {
+
+    // =========================================
+    // COMPROBAR SI ES MI TURNO
+    // =========================================
+
+    if (isOnlineGame) {
+
+        const currentPlayer =
+            players[currentPlayerIndex];
+
+        if (
+            !currentPlayer ||
+            currentPlayer.name !== currentPlayerName
+        ) {
+
+            alert("⏳ No es tu turno.");
+            return;
+        }
+
+    }
+
+
+    // =========================================
+    // COMPROBAR POSICIÓN
+    // =========================================
 
     if (selectedPosition === null) {
         return;
     }
 
+
+    // =========================================
+    // COMPROBAR RESPUESTA
+    // =========================================
+
     lastAnswerWasCorrect =
-        isCorrectPosition(
-            selectedPosition
-        );
+        isCorrectPosition(selectedPosition);
 
-    if (lastAnswerWasCorrect) {
 
-        timelineSongs.splice(
-            selectedPosition,
-            0,
-            currentSong
-        );
+    // =========================================
+    // PARTIDA ONLINE
+    // =========================================
 
-        score +=
-            100 +
-            streak * 20;
+    if (isOnlineGame) {
 
-        streak++;
+        // El jugador que está jugando
+        const currentPlayer =
+            players[currentPlayerIndex];
 
-        bestStreak =
-            Math.max(
-                bestStreak,
-                streak
+
+        if (!currentPlayer) {
+
+            console.error(
+                "❌ No existe el jugador actual."
             );
 
-    } else {
+            return;
+        }
 
-        streak = 0;
+
+        // =====================================
+        // RESPUESTA CORRECTA
+        // =====================================
+
+        if (lastAnswerWasCorrect) {
+
+            currentPlayer.timelineSongs.splice(
+                selectedPosition,
+                0,
+                currentSong
+            );
+
+
+            currentPlayer.score +=
+                100 +
+                currentPlayer.streak * 20;
+
+
+            currentPlayer.streak++;
+
+
+        } else {
+
+            currentPlayer.streak = 0;
+
+        }
+
+
+        // =====================================
+        // CONVERTIR TIMELINE A IDS
+        // =====================================
+
+        const timelineSongIds =
+            currentPlayer.timelineSongs.map(
+                function(song) {
+
+                    return songs.indexOf(song);
+
+                }
+            );
+
+
+        // =====================================
+        // GUARDAR EN SUPABASE
+        // =====================================
+
+        const { data: updatedPlayer, error } =
+    await supabaseClient
+        .from("game_players")
+        .update({
+
+            timeline_song_ids: timelineSongIds,
+
+            score: currentPlayer.score,
+
+            streak: currentPlayer.streak
+
+        })
+        .eq("id", currentPlayer.id)
+        .select()
+        .single();
+
+
+if (error) {
+
+    console.error(
+        "❌ ERROR GUARDANDO JUGADA EN SUPABASE:",
+        error
+    );
+
+    alert(
+        "❌ No se pudo guardar la canción."
+    );
+
+    return;
+}
+
+
+// =========================================
+// ACTUALIZAR JUGADOR LOCAL
+// =========================================
+
+currentPlayer.timelineSongs =
+    updatedPlayer.timeline_song_ids.map(
+        function(songId) {
+
+            return songs[songId];
+
+        }
+    );
+
+
+// =========================================
+// ACTUALIZAR MI LÍNEA
+// =========================================
+
+timelineSongs =
+    currentPlayer.timelineSongs;
+
+
+// =========================================
+// REDIBUJAR LA LÍNEA
+// =========================================
+
+renderTimeline();
+
+
+console.log(
+    "✅ CANCIÓN GUARDADA:",
+    currentSong.title
+);
+
+console.log(
+    "🎵 MI LÍNEA:",
+    timelineSongs
+);
+
+
+        if (error) {
+
+            console.error(
+                "❌ Error guardando línea:",
+                error
+            );
+
+            alert(
+                "❌ No se pudo guardar la jugada."
+            );
+
+            return;
+        }
+
+
+        // =====================================
+        // ACTUALIZAR MI LÍNEA
+        // =====================================
+
+        timelineSongs =
+            currentPlayer.timelineSongs;
+
+
+        console.log(
+            "✅ Línea guardada:",
+            timelineSongs
+        );
+
     }
 
-    // SIEMPRE mostramos primero
-    // el resultado de la canción
+
+    // =========================================
+    // PARTIDA LOCAL
+    // =========================================
+
+    else {
+
+        if (lastAnswerWasCorrect) {
+
+            timelineSongs.splice(
+                selectedPosition,
+                0,
+                currentSong
+            );
+
+            score +=
+                100 +
+                streak * 20;
+
+            streak++;
+
+            bestStreak =
+                Math.max(
+                    bestStreak,
+                    streak
+                );
+
+        } else {
+
+            streak = 0;
+
+        }
+
+    }
+
+
+    // =========================================
+    // MOSTRAR RESULTADO
+    // =========================================
+
     showResult();
 }
 
@@ -2059,18 +3070,167 @@ checkButton.addEventListener(
 );
 
 
-function nextPlayerTurn() {
+async function nextPlayerTurn() {
+
+    // ==================================
+    // PARTIDA ONLINE
+    // ==================================
+
+    if (isOnlineGame) {
+
+        // ----------------------------------
+        // COMPROBAR QUE SEA MI TURNO
+        // ----------------------------------
+
+        const currentPlayer =
+            players[currentPlayerIndex];
+
+        if (
+            !currentPlayer ||
+            currentPlayer.name !== currentPlayerName
+        ) {
+
+            console.log(
+                "⏳ No es tu turno."
+            );
+
+            return;
+        }
+
+
+        // ----------------------------------
+        // OBTENER ESTADO ACTUAL DE LA PARTIDA
+        // ----------------------------------
+
+        const { data: game, error: gameError } =
+            await supabaseClient
+                .from("games")
+                .select("*")
+                .eq("id", currentGameId)
+                .single();
+
+
+        if (gameError) {
+
+            console.error(
+                "❌ Error obteniendo partida:",
+                gameError
+            );
+
+            return;
+        }
+
+
+        // ----------------------------------
+        // CALCULAR SIGUIENTE JUGADOR
+        // ----------------------------------
+
+        const nextIndex =
+            (currentPlayerIndex + 1) %
+            players.length;
+
+
+        // ----------------------------------
+        // OBTENER SIGUIENTE CANCIÓN
+        // ----------------------------------
+
+        const deck =
+            game.song_deck;
+
+        let deckPosition =
+            game.deck_position;
+
+
+        if (
+            !deck ||
+            deckPosition >= deck.length
+        ) {
+
+            console.error(
+                "❌ No quedan canciones en el mazo."
+            );
+
+            return;
+        }
+
+
+        const nextSongId =
+            deck[deckPosition];
+
+
+        deckPosition++;
+
+
+        console.log(
+            "🎵 Siguiente canción:",
+            nextSongId
+        );
+
+        console.log(
+            "👤 Siguiente jugador:",
+            nextIndex
+        );
+
+
+        // ----------------------------------
+        // GUARDAR NUEVO TURNO Y CANCIÓN
+        // ----------------------------------
+
+        const { error } =
+            await supabaseClient
+                .from("games")
+                .update({
+
+                    current_player_index:
+                        nextIndex,
+
+                    current_song_id:
+                        nextSongId,
+
+                    deck_position:
+                        deckPosition
+
+                })
+                .eq(
+                    "id",
+                    currentGameId
+                );
+
+
+        if (error) {
+
+            console.error(
+                "❌ Error cambiando turno:",
+                error
+            );
+
+            return;
+        }
+
+
+        console.log(
+            "✅ Turno cambiado correctamente."
+        );
+
+        return;
+    }
+
+
+    // ==================================
+    // PARTIDA LOCAL
+    // ==================================
 
     currentPlayerIndex++;
 
-    // Si llegamos al último jugador,
-    // volvemos al primero
+
     if (
         currentPlayerIndex >=
         players.length
     ) {
+
         currentPlayerIndex = 0;
     }
+
 
     nextRound();
 }
@@ -2253,6 +3413,7 @@ createGameButton.addEventListener("click", function() {
     crearPartida();
 });
 
+
 joinGameButton.addEventListener("click", async function() {
 
     const roomCode = prompt("🎵 Ingresa el código de la partida:");
@@ -2332,8 +3493,11 @@ joinGameButton.addEventListener("click", async function() {
     }
 
     // Guardar datos actuales
-    currentGameId = game.id;
-    currentPlayerName = nombre;
+   currentGameId = game.id;
+currentPlayerName = nombre;
+isGameHost = false;
+isOnlineGame = true;
+startOnlineButton.style.display = "none";
 
     console.log("✅ Entraste a la partida:", game.room_code);
     console.log("✅ Jugador:", nombre);
@@ -2376,4 +3540,6 @@ joinGameButton.addEventListener("click", async function() {
     });
 
     onlineLobbyScreen.classList.add("active");
+    escucharJugadores(currentGameId);
+    escucharPartida(currentGameId);
 });
