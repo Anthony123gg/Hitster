@@ -873,9 +873,44 @@ const createGameButton = document.getElementById("createGameButton");
 const joinGameButton = document.getElementById("joinGameButton");
 const onlineLobbyScreen = document.getElementById("onlineLobbyScreen");
 const roomCodeDisplay = document.getElementById("roomCodeDisplay");
+const copyRoomCodeButton =
+    document.getElementById("copyRoomCodeButton");
 const onlinePlayersList = document.getElementById("onlinePlayersList");
 const lobbyMessage = document.getElementById("lobbyMessage");
 const startOnlineButton = document.getElementById("startOnlineButton");
+copyRoomCodeButton.addEventListener(
+    "click",
+    async function () {
+
+        const codigo =
+            roomCodeDisplay.textContent.trim();
+
+        try {
+
+            await navigator.clipboard.writeText(codigo);
+
+            copyRoomCodeButton.textContent = "✓";
+
+            setTimeout(
+                function () {
+
+                    copyRoomCodeButton.textContent = "📋";
+
+                },
+                1500
+            );
+
+        } catch (error) {
+
+            console.error(
+                "❌ No se pudo copiar el código:",
+                error
+            );
+
+        }
+
+    }
+);
 
 startOnlineButton.addEventListener("click", async function() {
 
@@ -1105,6 +1140,48 @@ const audioPlayer =
 
     const turnText =
     document.getElementById("turnText");
+
+    const turnResultIndicator =
+    document.getElementById("turnResultIndicator");
+
+    function mostrarResultadoTurno(resultado) {
+
+    if (!turnResultIndicator) {
+        return;
+    }
+
+    turnResultIndicator.classList.remove(
+        "correct",
+        "incorrect"
+    );
+
+    if (resultado === true) {
+
+        turnResultIndicator.textContent = "✓";
+
+        turnResultIndicator.classList.add(
+            "correct"
+        );
+
+        turnResultIndicator.style.display = "flex";
+
+    } else if (resultado === false) {
+
+        turnResultIndicator.textContent = "✕";
+
+        turnResultIndicator.classList.add(
+            "incorrect"
+        );
+
+        turnResultIndicator.style.display = "flex";
+
+    } else {
+
+        turnResultIndicator.textContent = "";
+
+        turnResultIndicator.style.display = "none";
+    }
+}
 
 const backgroundMusic =
     document.getElementById("backgroundMusic");
@@ -1641,9 +1718,7 @@ async function actualizarTurnoOnline(playerIndex) {
         return;
     }
 
-    // Su línea de tiempo
-    timelineSongs =
-        currentPlayer.timelineSongs;
+    
 
     // Canción actual
     const songId =
@@ -1857,16 +1932,6 @@ async function entrarAlJuegoOnline() {
 const currentPlayer =
     players[currentPlayerIndex];
 
-if (!currentPlayer) {
-
-    console.error(
-        "❌ No se encontró el jugador actual."
-    );
-
-    return;
-}
-
-// Buscar al jugador de ESTA computadora
 const myPlayer =
     players.find(function(player) {
 
@@ -1883,7 +1948,6 @@ if (!myPlayer) {
     return;
 }
 
-// Cada jugador ve SU propia línea de tiempo
 timelineSongs =
     myPlayer.timelineSongs;
 
@@ -1978,39 +2042,114 @@ function escucharPartida(gameId) {
                     payload.new
                 );
 
-                // ==========================
-                // LA PARTIDA COMENZÓ
-                // ==========================
+
+                // =========================================
+                // RESULTADO DEL TURNO
+                // =========================================
 
                 if (
-                    payload.new.status === "playing" &&
-                    !gameScreen.classList.contains("active")
+                    payload.new.turn_result !== null &&
+                    payload.new.turn_result !== undefined
+                ) {
+
+                    const jugadorActual =
+                        players[
+                            payload.new.current_player_index
+                        ];
+
+                    // Solo mostrarlo en los dispositivos
+                    // que NO están jugando este turno
+                    if (
+                        jugadorActual &&
+                        jugadorActual.name !==
+                            currentPlayerName
+                    ) {
+
+                        mostrarResultadoTurno(
+                            payload.new.turn_result
+                        );
+
+                    }
+
+                    // MUY IMPORTANTE:
+                    // No recargar la partida solamente
+                    // porque cambió el resultado.
+                    return;
+                }
+
+
+                // =========================================
+                // LA PARTIDA ACABA DE COMENZAR
+                // =========================================
+
+                if (
+                    payload.old.status !== "playing" &&
+                    payload.new.status === "playing"
                 ) {
 
                     currentPlayerIndex =
                         payload.new.current_player_index;
+
+                    mostrarResultadoTurno(null);
 
                     await entrarAlJuegoOnline();
 
                     return;
                 }
 
-                // ==========================
-// CAMBIÓ EL TURNO
-// ==========================
 
-if (
-    payload.new.status === "playing"
-) {
+                // =========================================
+                // COMPROBAR SI CAMBIÓ EL TURNO
+                // =========================================
 
-    console.log(
-        "🔄 Nuevo turno:",
-        payload.new.current_player_index
-    );
+                const turnoCambio =
+                    payload.old.current_player_index !==
+                        payload.new.current_player_index ||
 
-    await entrarAlJuegoOnline();
+                    payload.old.current_song_id !==
+                        payload.new.current_song_id;
 
-} })
+
+                // =========================================
+                // NUEVO TURNO
+                // =========================================
+
+                if (
+                    payload.new.status === "playing" &&
+                    turnoCambio
+                ) {
+
+                    console.log(
+                        "🔄 Nuevo turno:",
+                        payload.new.current_player_index
+                    );
+
+                    currentPlayerIndex =
+                        payload.new.current_player_index;
+
+                    // Quitar ✓ o ✕
+                    mostrarResultadoTurno(null);
+
+                    await entrarAlJuegoOnline();
+
+                    return;
+                }
+
+
+                // =========================================
+                // OCULTAR RESULTADO
+                // =========================================
+
+                if (
+                    payload.new.turn_result === null
+                ) {
+
+                    mostrarResultadoTurno(null);
+
+                }
+
+            }
+        )
 
         .subscribe(function(status) {
 
@@ -2203,111 +2342,115 @@ function updateLives() {
 
 function renderTimeline() {
 
+    // Si estamos jugando online,
+    // mostramos la línea de tiempo del jugador que tiene el turno
+    if (isOnlineGame) {
+
+        const jugadorActual =
+            players[currentPlayerIndex];
+
+        if (!jugadorActual) {
+            console.error("❌ No se encontró el jugador actual.");
+            return;
+        }
+
+        // IMPORTANTE:
+        // Todos los dispositivos verán la línea del jugador que tiene el turno
+        timelineSongs =
+            jugadorActual.timelineSongs;
+    }
+
     timelineElement.innerHTML = "";
 
+    // Determinar si ESTE dispositivo puede modificar la línea
+    let puedeJugar = true;
 
+    if (isOnlineGame) {
+
+        const jugadorActual =
+            players[currentPlayerIndex];
+
+        puedeJugar =
+            jugadorActual &&
+            jugadorActual.name === currentPlayerName;
+    }
+
+    // Crear la línea de tiempo
     for (
         let position = 0;
         position <= timelineSongs.length;
         position++
     ) {
-    const isLastPosition =
-    position === timelineSongs.length;
 
-const lastSong =
-    timelineSongs[timelineSongs.length - 1];
+        const isLastPosition =
+            position === timelineSongs.length;
 
-if (
-    isLastPosition &&
-    lastSong &&
-    lastSong.year >= 2026
-) {
-    continue;
-}
-        // Espacio donde colocar la canción
+        const lastSong =
+            timelineSongs[timelineSongs.length - 1];
+
+        if (
+            isLastPosition &&
+            lastSong &&
+            lastSong.year >= 2026
+        ) {
+            continue;
+        }
+
         const slot =
-            document.createElement(
-                "button"
-            );
+            document.createElement("button");
 
         slot.className =
             "timeline-slot";
 
         slot.innerHTML = `
-    <span class="slot-plus">+</span>
-`;
+            <span class="slot-plus">+</span>
+        `;
 
+        // Si NO es nuestro turno, no podemos modificar
+        if (!puedeJugar) {
 
-        // =========================================
-// SOLO EL JUGADOR DEL TURNO PUEDE JUGAR
-// =========================================
+            slot.disabled = true;
 
-let puedeJugar = true;
+            slot.classList.add(
+                "slot-disabled"
+            );
 
-if (isOnlineGame) {
+        } else {
 
-    const jugadorActual =
-        players[currentPlayerIndex];
+            // Si es nuestro turno, podemos seleccionar una posición
+            slot.addEventListener(
+                "click",
+                function () {
 
-    puedeJugar =
-        jugadorActual &&
-        jugadorActual.name === currentPlayerName;
-}
+                    const allSlots =
+                        document.querySelectorAll(
+                            ".timeline-slot"
+                        );
 
+                    allSlots.forEach(
+                        function(item) {
+                            item.classList.remove(
+                                "selected"
+                            );
+                        }
+                    );
 
-// =========================================
-// CONFIGURAR SLOT
-// =========================================
-
-if (!puedeJugar) {
-
-    slot.disabled = true;
-
-    slot.classList.add(
-        "slot-disabled"
-    );
-
-} else {
-
-    slot.addEventListener(
-        "click",
-        function () {
-
-            const allSlots =
-                document.querySelectorAll(
-                    ".timeline-slot"
-                );
-
-            allSlots.forEach(
-                function (item) {
-
-                    item.classList.remove(
+                    slot.classList.add(
                         "selected"
                     );
 
+                    selectedPosition =
+                        position;
+
+                    checkButton.disabled =
+                        false;
                 }
             );
-
-            slot.classList.add(
-                "selected"
-            );
-
-            selectedPosition =
-                position;
-
-            checkButton.disabled =
-                false;
         }
-    );
-}
 
+        timelineElement.appendChild(slot);
 
-        timelineElement.appendChild(
-            slot
-        );
-
-
-        // Tarjeta de canción ya conseguida
+        // Mostrar canción
         if (
             position <
             timelineSongs.length
@@ -2317,9 +2460,7 @@ if (!puedeJugar) {
                 timelineSongs[position];
 
             const card =
-                document.createElement(
-                    "article"
-                );
+                document.createElement("article");
 
             card.className =
                 "timeline-card";
@@ -2334,10 +2475,16 @@ if (!puedeJugar) {
                 </strong>
             `;
 
-            timelineElement.appendChild(
-                card
-            );
+            timelineElement.appendChild(card);
         }
+    }
+
+    // Si no es nuestro turno, bloquear botón de comprobar
+    if (!puedeJugar) {
+
+        selectedPosition = null;
+
+        checkButton.disabled = true;
     }
 }
 
@@ -2421,6 +2568,31 @@ async function checkAnswer() {
     lastAnswerWasCorrect =
         isCorrectPosition(selectedPosition);
 
+        // =========================================
+// GUARDAR RESULTADO DEL TURNO ONLINE
+// =========================================
+
+if (isOnlineGame) {
+
+    const { error: resultError } =
+        await supabaseClient
+            .from("games")
+            .update({
+                turn_result: lastAnswerWasCorrect
+            })
+            .eq("id", currentGameId);
+
+    if (resultError) {
+
+        console.error(
+            "❌ Error guardando resultado del turno:",
+            resultError
+        );
+
+        return;
+    }
+}
+
 
     // =========================================
     // PARTIDA ONLINE
@@ -2440,7 +2612,8 @@ async function checkAnswer() {
             );
 
             return;
-        }
+        }const turnResultIndicator =
+    document.getElementById("turnResultIndicator");
 
 
         // =====================================
@@ -3066,7 +3239,19 @@ playMusicButton.addEventListener(
 
 checkButton.addEventListener(
     "click",
-    checkAnswer
+    async function () {
+
+        // Evitar más de un clic
+        if (checkButton.disabled) {
+            return;
+        }
+
+        // Bloquear inmediatamente
+        checkButton.disabled = true;
+
+        // Comprobar respuesta
+        await checkAnswer();
+    }
 );
 
 
@@ -3181,16 +3366,19 @@ async function nextPlayerTurn() {
                 .from("games")
                 .update({
 
-                    current_player_index:
-                        nextIndex,
+    current_player_index:
+        nextIndex,
 
-                    current_song_id:
-                        nextSongId,
+    current_song_id:
+        nextSongId,
 
-                    deck_position:
-                        deckPosition
+    deck_position:
+        deckPosition,
 
-                })
+    turn_result:
+        null
+
+})
                 .eq(
                     "id",
                     currentGameId
@@ -3239,6 +3427,11 @@ async function nextPlayerTurn() {
 continueButton.addEventListener(
     "click",
     function () {
+        if (continueButton.disabled) {
+    return;
+}
+
+continueButton.disabled = true;
 
         // Primero comprobamos si el jugador
         // que acaba de jugar llegó a 10 cartas
