@@ -3907,3 +3907,102 @@ body::marker {
     cursor: not-allowed;
     opacity: 0.45;
 }
+/* =========================================
+   CÓDIGO DE SALA + BOTÓN COPIAR
+========================================= */
+
+.room-code-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    width: 100%;
+    margin: 10px auto 25px;
+}
+
+.room-code {
+    margin: 0;
+    line-height: 1;
+    text-align: center;
+}
+
+.copy-room-button {
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--blue);
+    border-radius: 14px;
+
+    background: rgba(10, 20, 40, 0.8);
+
+    color: white;
+    font-size: 25px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.copy-room-button:hover {
+    transform: scale(1.05);
+
+    box-shadow:
+        0 0 15px rgba(23, 201, 255, 0.5);
+
+    background: rgba(23, 201, 255, 0.12);
+}
+
+.copy-room-button:active {
+    transform: scale(0.95);
+}
+
+.turn-result-indicator {
+    position: absolute;
+    top: 25px;
+    right: 30px;
+
+    width: 55px;
+    height: 55px;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-size: 34px;
+    font-weight: 800;
+
+    z-index: 1000;
+}
+
+.turn-result-indicator.correct {
+    display: flex;
+
+    color: #00ff88;
+
+    border: 2px solid #00ff88;
+
+    box-shadow:
+        0 0 10px rgba(0, 255, 136, 0.7),
+        0 0 25px rgba(0, 255, 136, 0.5);
+}
+
+.turn-result-indicator.incorrect {
+    display: flex;
+
+    color: #ff3366;
+
+    border: 2px solid #ff3366;
+
+    box-shadow:
+        0 0 10px rgba(255, 51, 102, 0.7),
+        0 0 25px rgba(255, 51, 102, 0.5);
+}
