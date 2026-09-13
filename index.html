@@ -186,12 +186,20 @@
         </div>
 
         <div class="room-code-label">
-            CÓDIGO DE SALA
-        </div>
+    CÓDIGO DE SALA
+</div>
 
-        <div id="roomCodeDisplay" class="room-code">
-            A7K92
-        </div>
+<div class="room-code-container">
+
+    <div id="roomCodeDisplay" class="room-code">
+        A7K92
+    </div>
+
+    <button id="copyRoomCodeButton" class="copy-room-button" title="Copiar código">
+        📋
+    </button>
+
+</div>
 
         <div class="players-title">
             JUGADORES
@@ -222,6 +230,7 @@
         <!-- PANTALLA DEL JUEGO -->
 
         <section id="gameScreen" class="screen">
+            <div id="turnResultIndicator" class="turn-result-indicator"></div>
     <button id="homeButton" class="home-button" aria-label="Volver al inicio">
     <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M12 3.2L3.8 9.8c-.3.2-.4.7-.1 1 .2.3.7.4 1 .1l.7-.6V19c0 .6.4 1 1 1h4.3c.6 0 1-.4 1-1v-4.2h1.8V19c0 .6.4 1 1 1H18c.6 0 1-.4 1-1v-8.7l.7.6c.3.2.8.2 1-.1.2-.3.2-.8-.1-1L12 3.2z"/>
