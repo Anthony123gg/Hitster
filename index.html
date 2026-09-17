@@ -53,6 +53,122 @@
 </head>
 
 <body>
+    <!-- MODAL INGRESAR NOMBRE -->
+<div id="nameModal" class="name-modal">
+
+    <div class="name-modal-box">
+
+        <div class="name-modal-icon">
+            👤
+        </div>
+
+        <h2>Ingresa tu nombre</h2>
+
+        <p>Escribe el nombre que usarás en la partida.</p>
+
+        <input
+            type="text"
+            id="playerNameInput"
+            placeholder="Tu nombre"
+            maxlength="15"
+            autocomplete="off"
+        >
+
+        <div class="name-modal-buttons">
+
+            <button
+                type="button"
+                id="cancelNameButton"
+                class="name-cancel-button">
+                Cancelar
+            </button>
+
+            <button
+                type="button"
+                id="acceptNameButton"
+                class="name-accept-button">
+                Continuar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- MODAL INGRESAR CÓDIGO -->
+<div id="roomCodeModal" class="name-modal">
+
+    <div class="name-modal-box room-code-modal-box">
+
+        <div class="room-code-icon">
+            🎵
+        </div>
+
+        <h2>Ingresa el código</h2>
+
+        <p>Escribe el código de la partida para unirte.</p>
+
+        <input
+            type="text"
+            id="roomCodeInput"
+            placeholder="Código de la partida"
+            maxlength="5"
+            autocomplete="off"
+        >
+
+        <div class="name-modal-buttons">
+
+            <button
+                type="button"
+                id="cancelRoomCodeButton"
+                class="name-cancel-button">
+                Cancelar
+            </button>
+
+            <button
+                type="button"
+                id="acceptRoomCodeButton"
+                class="name-accept-button">
+                Aceptar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- MODAL ERROR - PARTIDA NO EXISTE -->
+<div id="errorModal" class="name-modal">
+
+    <div class="name-modal-box error-modal-box">
+
+        <div class="error-modal-icon">
+            ✕
+        </div>
+
+        <h2>Partida no encontrada</h2>
+
+        <p id="errorModalMessage">
+            La partida no existe.
+        </p>
+
+        <div class="error-modal-buttons">
+
+            <button
+                type="button"
+                id="errorModalButton"
+                class="name-accept-button">
+                Aceptar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+    
    <audio id="backgroundMusic" loop preload="auto">
     <source src="Kerusu - Onwards (feat. BriCie).mp3" type="audio/mpeg">
 </audio>
@@ -68,6 +184,9 @@
         <!-- PANTALLA DE INICIO -->
 
         <section id="homeScreen" class="screen active">
+            <button id="exitOnlineButton" class="exit-online-button">
+    ‹
+</button>
             <button id="backButton" class="back-button">
     ‹
 </button>
@@ -491,6 +610,13 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
+    
+
+
+
+
+</body>
+</html>
 
 </body>
 </html>
