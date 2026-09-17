@@ -2042,77 +2042,48 @@ audio {
 ================================================== */
 
 .back-button {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+
+    width: 55px;
+    height: 55px;
+
     display: none;
 
-    position: absolute;
-    top: 26px;
-    left: 26px;
-
-    z-index: 10;
-
-    width: 52px;
-    height: 52px;
+    align-items: center;
+    justify-content: center;
 
     padding: 0;
 
-    border-radius: 16px;
+    border: 2px solid #00d9ff;
+    border-radius: 50%;
 
-    color: #ffffff;
+    background: rgba(5, 15, 35, 0.8);
 
-    font-size: 27px;
-    font-weight: 500;
+    color: #00d9ff;
+    font-size: 30px;
+    font-weight: 700;
 
     cursor: pointer;
 
-    background:
-        linear-gradient(
-            145deg,
-            rgba(23, 201, 255, 0.10),
-            rgba(137, 56, 255, 0.10),
-            rgba(255, 45, 141, 0.08)
-        );
-
-    border:
-        1px solid
-        rgba(23, 201, 255, 0.40);
-
     box-shadow:
-        0 0 12px rgba(23, 201, 255, 0.10),
-        inset 0 0 12px rgba(255, 255, 255, 0.025);
+        0 0 10px rgba(0, 217, 255, 0.5),
+        0 0 25px rgba(0, 217, 255, 0.3);
 
-    backdrop-filter: blur(12px);
-
-    transition:
-        transform 0.25s ease,
-        border-color 0.25s ease,
-        box-shadow 0.25s ease,
-        background 0.25s ease;
+    z-index: 1000;
 }
 
 .back-button.show {
-    display: grid;
-    place-items: center;
+    display: flex;
 }
 
 .back-button:hover {
-    transform:
-        translateX(-3px)
-        scale(1.06);
-
-    border-color:
-        rgba(23, 201, 255, 0.85);
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(23, 201, 255, 0.18),
-            rgba(137, 56, 255, 0.15),
-            rgba(255, 45, 141, 0.12)
-        );
+    transform: scale(1.08);
 
     box-shadow:
-        0 0 12px rgba(23, 201, 255, 0.35),
-        0 0 25px rgba(137, 56, 255, 0.18);
+        0 0 15px rgba(0, 217, 255, 0.8),
+        0 0 30px rgba(0, 217, 255, 0.5);
 }
 
 .back-button:active {
@@ -3902,7 +3873,6 @@ body::marker {
     box-shadow:
         0 0 18px rgba(255, 45, 141, 0.5);
 }
-
 .timeline-slot.slot-disabled {
     cursor: not-allowed;
     opacity: 0.45;
@@ -4005,4 +3975,843 @@ body::marker {
     box-shadow:
         0 0 10px rgba(255, 51, 102, 0.7),
         0 0 25px rgba(255, 51, 102, 0.5);
+}
+
+.exit-online-button {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+
+    width: 55px;
+    height: 55px;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid #00d9ff;
+    border-radius: 50%;
+
+    background: rgba(5, 15, 35, 0.8);
+
+    color: #00d9ff;
+    font-size: 30px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 0 10px rgba(0, 217, 255, 0.5),
+        0 0 25px rgba(0, 217, 255, 0.3);
+
+    z-index: 1000;
+}
+
+.exit-online-button.show {
+    display: flex;
+    
+}
+
+.exit-online-button:hover {
+    transform: scale(1.08);
+
+    box-shadow:
+        0 0 15px rgba(0, 217, 255, 0.8),
+        0 0 30px rgba(0, 217, 255, 0.5);
+}
+
+.online-hidden {
+    display: none !important;
+}
+/* =========================================
+   MODAL INGRESAR NOMBRE - HITSTER
+   ========================================= */
+
+.name-modal {
+    position: fixed;
+    inset: 0;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at 50% 40%,
+            rgba(0, 220, 255, 0.08),
+            transparent 45%
+        ),
+        rgba(0, 0, 0, 0.78);
+
+    backdrop-filter: blur(12px);
+
+    z-index: 99999;
+}
+
+.name-modal.show {
+    display: flex;
+    animation: nameModalFade 0.25s ease;
+}
+
+
+/* =========================================
+   CAJA PRINCIPAL
+   ========================================= */
+
+.name-modal-box {
+
+    position: relative;
+
+    width: min(500px, 90%);
+
+    padding: 42px 40px 36px;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(0, 210, 255, 0.10),
+            transparent 45%
+        ),
+        linear-gradient(
+            145deg,
+            #080b12,
+            #0d111b 55%,
+            #080b12
+        );
+
+    border-radius: 22px;
+
+    border: 2px solid transparent;
+
+    background-clip: padding-box;
+
+    box-shadow:
+        0 0 0 1px rgba(0, 210, 255, 0.55),
+        0 0 25px rgba(0, 210, 255, 0.25),
+        0 25px 80px rgba(0, 0, 0, 0.65);
+
+    text-align: center;
+
+    overflow: hidden;
+
+    animation: nameModalPop 0.3s ease;
+}
+
+
+/* Línea luminosa superior */
+
+.name-modal-box::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 8%;
+    right: 8%;
+
+    height: 3px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #00d9ff,
+            #ffffff,
+            #ffc83d
+        );
+
+    box-shadow:
+        0 0 10px #00d9ff,
+        0 0 20px rgba(0, 217, 255, 0.6),
+        0 0 15px rgba(255, 200, 61, 0.4);
+}
+
+
+/* =========================================
+   ICONO
+   ========================================= */
+
+.name-modal-icon {
+
+    width: 68px;
+    height: 68px;
+
+    margin: 4px auto 18px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            #121925,
+            #05070b
+        );
+
+    border: 2px solid #00d9ff;
+
+    box-shadow:
+        0 0 12px rgba(0, 217, 255, 0.6),
+        0 0 30px rgba(0, 217, 255, 0.25);
+
+    color: #ffffff;
+
+    font-size: 30px;
+
+    position: relative;
+}
+
+
+/* Anillo dorado */
+
+.name-modal-icon::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -4px;
+
+    border-radius: 50%;
+
+    border: 2px solid transparent;
+
+    border-top-color: #ffc83d;
+    border-right-color: #ffc83d;
+
+    transform: rotate(25deg);
+
+}
+
+
+/* =========================================
+   TÍTULO
+   ========================================= */
+
+.name-modal-box h2 {
+
+    margin: 0 0 8px;
+
+    color: #ffffff;
+
+    font-family: "Orbitron", sans-serif;
+
+    font-size: 27px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+
+    text-shadow:
+        0 0 8px rgba(255, 255, 255, 0.25),
+        0 0 18px rgba(0, 217, 255, 0.25);
+}
+
+
+/* =========================================
+   SUBTÍTULO
+   ========================================= */
+
+.name-modal-box p {
+
+    margin: 0 0 27px;
+
+    color: #aab4c4;
+
+    font-size: 14px;
+
+    letter-spacing: 0.3px;
+}
+
+
+/* =========================================
+   INPUT
+   ========================================= */
+
+.name-modal-box input {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 16px 18px;
+
+    border: 1px solid #344252;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #070a10,
+            #0c1119
+        );
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 16px;
+
+    outline: none;
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+}
+
+
+.name-modal-box input::placeholder {
+
+    color: #687384;
+}
+
+
+.name-modal-box input:focus {
+
+    border-color: #00d9ff;
+
+    background: #090e16;
+
+    box-shadow:
+        0 0 0 2px rgba(0, 217, 255, 0.12),
+        0 0 18px rgba(0, 217, 255, 0.25);
+}
+
+
+/* =========================================
+   BOTONES
+   ========================================= */
+
+.name-modal-buttons {
+
+    display: flex;
+
+    gap: 14px;
+
+    margin-top: 23px;
+}
+
+
+/* CANCELAR */
+
+.name-cancel-button {
+
+    flex: 1;
+
+    padding: 14px 18px;
+
+    border: 1px solid #3b4858;
+
+    border-radius: 11px;
+
+    background: #0a0e15;
+
+    color: #aeb7c4;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        color 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.name-cancel-button:hover {
+
+    background: #111722;
+
+    border-color: #68788c;
+
+    color: #ffffff;
+
+    transform: translateY(-2px);
+}
+
+
+/* CONTINUAR */
+
+.name-accept-button {
+
+    flex: 1;
+
+    padding: 14px 18px;
+
+    border: none;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            100deg,
+            #00bfe8,
+            #00d9ff 45%,
+            #ffc83d
+        );
+
+    color: #05070a;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 0 12px rgba(0, 217, 255, 0.35),
+        0 5px 20px rgba(0, 0, 0, 0.35);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+}
+
+
+.name-accept-button:hover {
+
+    transform: translateY(-2px);
+
+    filter: brightness(1.08);
+
+    box-shadow:
+        0 0 20px rgba(0, 217, 255, 0.55),
+        0 0 30px rgba(255, 200, 61, 0.2),
+        0 8px 25px rgba(0, 0, 0, 0.45);
+}
+
+
+.name-accept-button:active {
+
+    transform: translateY(0);
+}
+
+
+/* =========================================
+   ANIMACIONES
+   ========================================= */
+
+@keyframes nameModalFade {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+
+@keyframes nameModalPop {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            scale(0.92)
+            translateY(15px);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            scale(1)
+            translateY(0);
+    }
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 500px) {
+
+    .name-modal-box {
+
+        width: 88%;
+
+        padding:
+            35px 24px 28px;
+    }
+
+
+    .name-modal-box h2 {
+
+        font-size: 22px;
+    }
+
+
+    .name-modal-box p {
+
+        font-size: 13px;
+    }
+
+
+    .name-modal-buttons {
+
+        flex-direction: column;
+    }
+
+}
+
+/* =========================================
+   MODAL CÓDIGO DE PARTIDA - HITSTER
+   ========================================= */
+
+.room-code-modal-box {
+
+    width: min(520px, 90%);
+
+}
+
+
+/* =========================================
+   ICONO DEL CÓDIGO
+   ========================================= */
+
+.room-code-icon {
+
+    width: 72px;
+    height: 72px;
+
+    margin: 3px auto 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            #121925,
+            #05070b
+        );
+
+    border: 2px solid #00d9ff;
+
+    box-shadow:
+        0 0 12px rgba(0, 217, 255, 0.65),
+        0 0 28px rgba(0, 217, 255, 0.25);
+
+    font-size: 30px;
+
+    position: relative;
+
+}
+
+
+/* Anillo dorado */
+
+.room-code-icon::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -5px;
+
+    border-radius: 50%;
+
+    border: 2px solid transparent;
+
+    border-top-color: #ffc83d;
+    border-right-color: #ffc83d;
+
+    transform: rotate(25deg);
+
+}
+
+
+/* =========================================
+   TÍTULO
+   ========================================= */
+
+.room-code-modal-box h2 {
+
+    font-family: "Orbitron", sans-serif;
+
+    font-size: 25px;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+
+}
+
+
+/* =========================================
+   INPUT DEL CÓDIGO
+   ========================================= */
+
+.room-code-modal-box input {
+
+    text-align: center;
+
+    text-transform: uppercase;
+
+    letter-spacing: 7px;
+
+    font-family: "Orbitron", sans-serif;
+
+    font-size: 21px;
+
+    font-weight: 700;
+
+    color: #ffffff;
+
+}
+
+
+/* Placeholder */
+
+.room-code-modal-box input::placeholder {
+
+    letter-spacing: 1px;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 400;
+
+}
+
+
+/* =========================================
+   EFECTO AL ESCRIBIR
+   ========================================= */
+
+.room-code-modal-box input:focus {
+
+    border-color: #00d9ff;
+
+    box-shadow:
+        0 0 0 2px rgba(0, 217, 255, 0.12),
+        0 0 20px rgba(0, 217, 255, 0.3),
+        inset 0 0 15px rgba(0, 217, 255, 0.04);
+
+}
+
+
+/* =========================================
+   BOTÓN ACEPTAR
+   ========================================= */
+
+.room-code-modal-box .name-accept-button {
+
+    background:
+        linear-gradient(
+            100deg,
+            #00bfe8,
+            #00d9ff 45%,
+            #ffc83d
+        );
+
+    color: #05070a;
+
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 500px) {
+
+    .room-code-modal-box {
+
+        width: 88%;
+
+    }
+
+    .room-code-modal-box input {
+
+        font-size: 18px;
+
+        letter-spacing: 5px;
+
+    }
+
+}
+
+/* =========================================
+   MODAL DE ERROR - HITSTER
+   ========================================= */
+
+.error-modal-box {
+
+    width: min(460px, 90%);
+
+    padding:
+        38px 35px 32px;
+}
+
+
+/* =========================================
+   ICONO DE ERROR
+   ========================================= */
+
+.error-modal-icon {
+
+    width: 68px;
+    height: 68px;
+
+    margin: 4px auto 20px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            #151018,
+            #07080d
+        );
+
+    border: 2px solid #ff4d8d;
+
+    color: #ff4d8d;
+
+    font-size: 30px;
+
+    font-weight: 800;
+
+    box-shadow:
+        0 0 12px rgba(255, 77, 141, 0.55),
+        0 0 28px rgba(255, 77, 141, 0.2);
+
+    position: relative;
+
+}
+
+
+/* Anillo exterior */
+
+.error-modal-icon::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -5px;
+
+    border-radius: 50%;
+
+    border: 2px solid transparent;
+
+    border-top-color: #00d9ff;
+    border-right-color: #ffc83d;
+
+    transform: rotate(35deg);
+
+}
+
+
+/* =========================================
+   TÍTULO
+   ========================================= */
+
+.error-modal-box h2 {
+
+    margin: 0 0 10px;
+
+    color: #ffffff;
+
+    font-family: "Orbitron", sans-serif;
+
+    font-size: 23px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+
+    text-transform: uppercase;
+
+}
+
+
+/* =========================================
+   MENSAJE
+   ========================================= */
+
+.error-modal-box p {
+
+    margin: 0;
+
+    color: #aab4c4;
+
+    font-size: 15px;
+
+}
+
+
+/* =========================================
+   BOTÓN
+   ========================================= */
+
+.error-modal-buttons {
+
+    display: flex;
+
+    margin-top: 25px;
+}
+
+
+.error-modal-buttons .name-accept-button {
+
+    width: 100%;
+
+    flex: none;
+
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 500px) {
+
+    .error-modal-box {
+
+        width: 88%;
+
+        padding:
+            32px 24px 28px;
+    }
+
+    .error-modal-box h2 {
+
+        font-size: 20px;
+    }
+
 }
