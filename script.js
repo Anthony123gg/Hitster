@@ -868,6 +868,39 @@ const startButton =
     document.getElementById("startButton");
 
     const onlineButton = document.getElementById("onlineButton");
+    const nameModal =
+    document.getElementById("nameModal");
+
+const playerNameInput =
+    document.getElementById("playerNameInput");
+
+const acceptNameButton =
+    document.getElementById("acceptNameButton");
+
+const cancelNameButton =
+    document.getElementById("cancelNameButton");
+
+    const errorModal =
+    document.getElementById("errorModal");
+
+const errorModalMessage =
+    document.getElementById("errorModalMessage");
+
+const errorModalButton =
+    document.getElementById("errorModalButton");
+
+    const roomCodeModal =
+    document.getElementById("roomCodeModal");
+
+const roomCodeInput =
+    document.getElementById("roomCodeInput");
+
+const acceptRoomCodeButton =
+    document.getElementById("acceptRoomCodeButton");
+
+const cancelRoomCodeButton =
+    document.getElementById("cancelRoomCodeButton");
+    const exitOnlineButton = document.getElementById("exitOnlineButton");
 const onlineOptions = document.getElementById("onlineOptions");
 const createGameButton = document.getElementById("createGameButton");
 const joinGameButton = document.getElementById("joinGameButton");
@@ -1370,6 +1403,34 @@ function showScreen(screen) {
     });
 
     screen.classList.add("active");
+
+
+    // =========================================
+    // PANTALLA DE INICIO
+    // =========================================
+
+    if (screen === homeScreen) {
+
+        // Mostrar JUGAR ONLINE
+        onlineButton.style.display = "";
+
+        // OCULTAR CREAR / UNIRSE
+        onlineOptions.style.display = "none";
+
+        // Ocultar botón de salir
+        exitOnlineButton.classList.remove("show");
+
+    } else {
+
+        // Fuera del inicio, ocultar todo lo online
+        onlineButton.style.display = "none";
+
+        onlineOptions.style.display = "none";
+
+        exitOnlineButton.classList.remove("show");
+
+    }
+
 }
 
 
@@ -1420,22 +1481,160 @@ function generarCodigoSala() {
 
     return codigo;
 }
+function pedirNombre() {
 
+    return new Promise(function(resolve) {
+
+        nameModal.classList.add("show");
+
+        playerNameInput.value = "";
+
+        setTimeout(function() {
+            playerNameInput.focus();
+        }, 100);
+
+        acceptNameButton.onclick = function() {
+
+            const nombre =
+                playerNameInput.value.trim();
+
+            if (!nombre) {
+                playerNameInput.focus();
+                return;
+            }
+
+            nameModal.classList.remove("show");
+
+            resolve(nombre);
+        };
+
+        cancelNameButton.onclick = function() {
+
+            nameModal.classList.remove("show");
+
+            resolve(null);
+        };
+
+        playerNameInput.onkeydown = function(event) {
+
+            if (event.key === "Enter") {
+                acceptNameButton.click();
+            }
+
+            if (event.key === "Escape") {
+                cancelNameButton.click();
+            }
+
+        };
+
+    });
+}
+function pedirCodigoSala() {
+
+    return new Promise(function(resolve) {
+
+        roomCodeModal.classList.add("show");
+
+        roomCodeInput.value = "";
+
+        setTimeout(function() {
+
+            roomCodeInput.focus();
+
+        }, 100);
+
+
+        acceptRoomCodeButton.onclick =
+            function() {
+
+                const codigo =
+                    roomCodeInput.value
+                        .trim()
+                        .toUpperCase();
+
+                if (!codigo) {
+
+                    roomCodeInput.focus();
+
+                    return;
+                }
+
+                roomCodeModal.classList.remove(
+                    "show"
+                );
+
+                resolve(codigo);
+
+            };
+
+
+        cancelRoomCodeButton.onclick =
+            function() {
+
+                roomCodeModal.classList.remove(
+                    "show"
+                );
+
+                resolve(null);
+
+            };
+
+
+        roomCodeInput.onkeydown =
+            function(event) {
+
+                if (event.key === "Enter") {
+
+                    acceptRoomCodeButton.click();
+
+                }
+
+                if (event.key === "Escape") {
+
+                    cancelRoomCodeButton.click();
+
+                }
+
+            };
+
+    });
+
+}
+
+function mostrarErrorModal(mensaje) {
+
+    return new Promise(function(resolve) {
+
+        errorModalMessage.textContent =
+            mensaje;
+
+        errorModal.classList.add("show");
+
+        errorModalButton.onclick =
+            function() {
+
+                errorModal.classList.remove(
+                    "show"
+                );
+
+                resolve();
+
+            };
+
+    });
+
+}
 async function crearPartida() {
 
-    const playerName = prompt("🎵 Ingresa tu nombre:");
-
-    if (!playerName) {
-        return;
-    }
-
-    const nombre = playerName.trim();
+    const nombre =
+        await pedirNombre();
 
     if (!nombre) {
         return;
     }
 
-    const roomCode = generarCodigoSala();
+    const roomCode =
+        generarCodigoSala();
 
     // Crear la partida
     const { data, error } = await supabaseClient
@@ -1960,6 +2159,7 @@ timelineSongs =
     selectedPosition = null;
 
     checkButton.disabled = true;
+    continueButton.disabled = false;
 
     turnText.textContent =
         "TURNO DE " +
@@ -2276,7 +2476,9 @@ turnText.classList.add("turn-pulse");
 
     selectedPosition = null;
 
-    checkButton.disabled = true;
+checkButton.disabled = true;
+
+continueButton.disabled = false;
 
 
     // Reiniciamos reproductor
@@ -2927,6 +3129,10 @@ startButton.addEventListener(
 
         howButton.style.display =
             "none";
+            onlineButton.classList.add("online-hidden");
+
+        onlineButton.style.display =
+            "none";
 
         participantsOptions.classList.add(
             "show"
@@ -2935,7 +3141,6 @@ startButton.addEventListener(
         backButton.classList.add(
             "show"
         );
-
     }
 );
 
@@ -2967,15 +3172,18 @@ backButton.addEventListener(
 
         // Vuelven los botones iniciales
         startButton.style.display =
-            "";
+    "";
 
-        howButton.style.display =
-            "";
+howButton.style.display =
+    "";
 
-        // Oculta la flecha
-        backButton.classList.remove(
-            "show"
-        );
+onlineButton.classList.remove(
+    "online-hidden"
+);
+
+backButton.classList.remove(
+    "show"
+);
 
     }
 );
@@ -3241,13 +3449,18 @@ checkButton.addEventListener(
     "click",
     async function () {
 
-        // Evitar más de un clic
-        if (checkButton.disabled) {
+        // Evitar más de un clic SOLO ONLINE
+        if (
+            isOnlineGame &&
+            checkButton.disabled
+        ) {
             return;
         }
 
-        // Bloquear inmediatamente
-        checkButton.disabled = true;
+        // Bloquear SOLO en partida online
+        if (isOnlineGame) {
+            checkButton.disabled = true;
+        }
 
         // Comprobar respuesta
         await checkAnswer();
@@ -3427,11 +3640,16 @@ async function nextPlayerTurn() {
 continueButton.addEventListener(
     "click",
     function () {
-        if (continueButton.disabled) {
+        if (
+    isOnlineGame &&
+    continueButton.disabled
+) {
     return;
 }
 
-continueButton.disabled = true;
+if (isOnlineGame) {
+    continueButton.disabled = true;
+}
 
         // Primero comprobamos si el jugador
         // que acaba de jugar llegó a 10 cartas
@@ -3487,6 +3705,11 @@ homeButton.addEventListener(
         playGameButton.classList.remove("show");
 
         playersInputs.innerHTML = "";
+        onlineOptions.style.display = "none";
+
+exitOnlineButton.classList.remove("show");
+
+onlineButton.classList.remove("online-hidden");
 
         selectedPlayers = 0;
         playerNames = [];
@@ -3600,7 +3823,31 @@ onlineButton.addEventListener("click", function() {
 
     // Mostrar opciones online
     onlineOptions.style.display = "grid";
+    exitOnlineButton.classList.add("show");
 });
+
+exitOnlineButton.addEventListener(
+    "click",
+    function() {
+
+        // Ocultar opciones online
+        onlineOptions.style.display = "none";
+
+        // Mostrar botones principales
+        startButton.style.display = "";
+        howButton.style.display = "";
+
+        // Mostrar nuevamente JUGAR ONLINE
+        onlineButton.classList.remove(
+            "online-hidden"
+        );
+
+        // Ocultar botón de salida
+        exitOnlineButton.classList.remove(
+            "show"
+        );
+    }
+);
 
 createGameButton.addEventListener("click", function() {
     crearPartida();
@@ -3609,13 +3856,12 @@ createGameButton.addEventListener("click", function() {
 
 joinGameButton.addEventListener("click", async function() {
 
-    const roomCode = prompt("🎵 Ingresa el código de la partida:");
+    const codigo =
+    await pedirCodigoSala();
 
-    if (!roomCode) {
-        return;
-    }
-
-    const codigo = roomCode.trim().toUpperCase();
+if (!codigo) {
+    return;
+}
 
     // Buscar la partida
     const { data: game, error: gameError } = await supabaseClient
@@ -3630,23 +3876,22 @@ joinGameButton.addEventListener("click", async function() {
         return;
     }
 
-    if (!game) {
-        alert("❌ La partida no existe.");
-        return;
-    }
+   if (!game) {
 
-    // Pedir nombre
-    const playerName = prompt("👤 Ingresa tu nombre:");
+    await mostrarErrorModal(
+        "La partida no existe."
+    );
 
-    if (!playerName) {
-        return;
-    }
+    return;
+}
 
-    const nombre = playerName.trim();
+   // Pedir nombre usando el modal HITSTER
+const nombre =
+    await pedirNombre();
 
-    if (!nombre) {
-        return;
-    }
+if (!nombre) {
+    return;
+}
 
     // Ver cuántos jugadores hay
     const { data: existingPlayers, error: playersError } =
