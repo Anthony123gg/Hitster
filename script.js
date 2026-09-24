@@ -835,6 +835,112 @@ const songs = [
             "musica/Paul Anka  Put Your Head On My Shoulder [Letra  video].mp3"
     },
 
+    {
+    title: "Fireside",
+    artist: "Articks Monkeys",
+    year: 2013,
+    audio:
+            "musica/Fireside.mp3"
+},
+
+{
+    title: "Virgen",
+    artist: "Adolescent's Orquesta",
+    year: 2001,
+    audio:
+            "musica/Virgen best part loop.mp3"
+},
+
+{
+    title: "Alma Libre de Papel",
+    artist: "Glenda y Lorena",
+    year: 2026,
+    audio:
+            "musica/ALMA LIBRE DE PAPEL - Glenda & Lorena [letra].mp3"
+},
+
+{
+    title: "Te quiero",
+    artist: "Hombres G",
+    year: 1986,
+    audio:
+            "musica/Te quiero (Remaster 2015).mp3"
+},
+
+{
+    title: "Love Me Not",
+    artist: "Ravyn Lenae",
+    year: 2024,
+    audio:
+            "musica/Love me not edit audio (friendship ship).mp3"
+},
+
+{
+    title: "All Around Me",
+    artist: "Flyleaf",
+    year: 2005,
+    audio:
+            "musica/Flyleaf - All around me Sub. español.mp3"
+},
+
+{
+    title: "Vibra Continente",
+    artist: "Léo Santana & Karol G",
+    year: 2019,
+    audio:
+            "musica/Copa américa 2019 brazil vibra continente Karol g leo santana.mp3"
+},
+
+{
+    title: "I Want It All",
+    artist: "Articks Monkey",
+    year: 2013,
+    audio:
+            "musica/I Want It All - Arctic Monkeys (Sub. Español).mp3"
+},
+
+{
+    title: "NUTS",
+    artist: "Lil Peep ft. Rainy Bear",
+    year: 2015,
+    audio:
+            "musica/Lil Peep - Nuts (Lyrics).mp3"
+},
+
+{
+    title: "Un beso y una flor",
+    artist: "Nino Bravo",
+    year: 1972,
+    audio:
+            "musica/Nino Bravo - Un beso y una flor (Letra) (Solo la mejor parte).mp3"
+},
+
+{
+    title: "Here Comes the Sun",
+    artist: "The Beatles",
+    year: 1969,
+    audio:
+            "musica/Here Comes The Sun - The Beatles (Subtitulada).mp3"
+},
+
+{
+    title: "500 miles",
+    artist: "Peter , Paul and Mary",
+    year: 1960,
+    audio:
+            "musica/“lord im one” 500 miles best part looped.mp3"
+},
+
+{
+    title: "Hundred miles",
+    artist: "YALL",
+    year: 2015,
+    audio:
+            "musica/Hundred Miles - Yall feat. Gabriela Richardson [audio edit].mp3"
+},
+
+
+
     
 
 ];
@@ -2241,7 +2347,52 @@ function escucharPartida(gameId) {
                     "🔄 Cambio en partida:",
                     payload.new
                 );
+// =========================================
+// PARTIDA TERMINADA
+// =========================================
 
+if (
+    payload.new.status === "finished"
+) {
+
+    console.log(
+        "🏆 La partida terminó."
+    );
+
+    const winnerIndex =
+        payload.new.winner_player_index;
+
+
+    // Cargar jugadores actualizados
+    await cargarJugadoresOnline();
+
+
+    const winner =
+        players[winnerIndex];
+
+
+    if (!winner) {
+
+        console.error(
+            "❌ No se encontró al jugador ganador:",
+            winnerIndex
+        );
+
+        return;
+    }
+
+
+    console.log(
+        "🏆 GANADOR:",
+        winner.name
+    );
+
+
+    // Mostrar ganador en este dispositivo
+    showWinner(winner);
+
+    return;
+}
 
                 // =========================================
                 // RESULTADO DEL TURNO
@@ -3009,19 +3160,86 @@ console.log(
     showResult();
 }
 
-function checkWinner() {
+async function checkWinner() {
 
     const currentPlayer =
         players[currentPlayerIndex];
 
+    if (!currentPlayer) {
+        return false;
+    }
+
+    // =========================================
+    // ¿LLEGÓ A 10 CANCIONES?
+    // =========================================
+
     if (
-        currentPlayer.timelineSongs.length >= 10
+        currentPlayer.timelineSongs.length < 10
     ) {
+        return false;
+    }
+
+
+    // =========================================
+    // PARTIDA ONLINE
+    // =========================================
+
+    if (isOnlineGame) {
+
+        const { error } =
+            await supabaseClient
+                .from("games")
+                .update({
+
+                    status: "finished",
+
+                    winner_player_index:
+                        currentPlayerIndex
+
+                })
+                .eq(
+                    "id",
+                    currentGameId
+                );
+
+
+        if (error) {
+
+            console.error(
+                "❌ Error guardando ganador:",
+                error
+            );
+
+            alert(
+                "❌ No se pudo finalizar la partida."
+            );
+
+            return false;
+        }
+
+
+        console.log(
+            "🏆 GANADOR GUARDADO:",
+            currentPlayer.name
+        );
+
+
+        // Mostrarlo inmediatamente
+        // también en el dispositivo ganador
+
         showWinner(currentPlayer);
+
         return true;
     }
 
-    return false;
+
+    // =========================================
+    // PARTIDA LOCAL
+    // =========================================
+
+    showWinner(currentPlayer);
+
+    return true;
 }
 
 function showWinner(player) {
@@ -3639,27 +3857,31 @@ async function nextPlayerTurn() {
 
 continueButton.addEventListener(
     "click",
-    function () {
+    async function () {
+
         if (
-    isOnlineGame &&
-    continueButton.disabled
-) {
-    return;
-}
-
-if (isOnlineGame) {
-    continueButton.disabled = true;
-}
-
-        // Primero comprobamos si el jugador
-        // que acaba de jugar llegó a 10 cartas
-        if (checkWinner()) {
+            isOnlineGame &&
+            continueButton.disabled
+        ) {
             return;
         }
 
-        // Si todavía no ganó,
+        if (isOnlineGame) {
+            continueButton.disabled = true;
+        }
+
+
+        // Comprobar si alguien ganó
+        if (await checkWinner()) {
+            return;
+        }
+
+
+        // Si nadie ganó,
         // pasa al siguiente jugador
+
         nextPlayerTurn();
+
     }
 );
 
@@ -3792,6 +4014,18 @@ winnerButton.addEventListener(
         howButton.style.display = "";
 
         backButton.classList.remove("show");
+
+        onlineButton.style.display = "";
+
+onlineButton.classList.remove(
+    "online-hidden"
+);
+
+onlineOptions.style.display = "none";
+
+exitOnlineButton.classList.remove(
+    "show"
+);
 
         // ==============================
         // VOLVER AL INICIO
