@@ -1051,169 +1051,196 @@ copyRoomCodeButton.addEventListener(
     }
 );
 
-startOnlineButton.addEventListener("click", async function() {
+startOnlineButton.addEventListener(
+    "click",
+    async function() {
 
-    if (!isGameHost) {
-        alert("Solo el creador de la partida puede comenzar.");
-        return;
-    }
+        if (!isGameHost) {
 
-    console.log("🎮 Preparando partida online...");
+            alert(
+                "Solo el creador de la partida puede comenzar."
+            );
 
-    // =========================================
-    // 1. CREAR MAZO ÚNICO PARA TODOS
-    // =========================================
+            return;
+        }
 
-    const deck = shuffle(
-        songs.map(function(song, index) {
-            return index;
-        })
-    );
-
-    // =========================================
-    // 2. OBTENER JUGADORES
-    // =========================================
-
-    const { data: onlinePlayers, error: playersError } =
-        await supabaseClient
-            .from("game_players")
-            .select("*")
-            .eq("game_id", currentGameId)
-            .order("player_index", {
-                ascending: true
-            });
-
-    if (playersError) {
-
-        console.error(
-            "Error obteniendo jugadores:",
-            playersError
+        console.log(
+            "🎮 Preparando partida online..."
         );
 
-        alert("❌ No se pudieron cargar los jugadores.");
-        return;
-    }
+        // =========================================
+        // 1. CREAR MAZO ÚNICO PARA TODOS
+        // =========================================
 
-    if (onlinePlayers.length < 2) {
-
-        alert(
-            "❌ Se necesitan al menos 2 jugadores."
+        const deck = shuffle(
+            songs.map(function(song, index) {
+                return index;
+            })
         );
 
-        return;
-    }
+        // =========================================
+        // 2. OBTENER JUGADORES
+        // =========================================
 
-    // =========================================
-    // 3. DAR UNA CANCIÓN INICIAL A CADA JUGADOR
-    // =========================================
+        const {
+            data: onlinePlayers,
+            error: playersError
+        } =
+            await supabaseClient
+                .from("game_players")
+                .select("*")
+                .eq("game_id", currentGameId)
+                .order(
+                    "player_index",
+                    {
+                        ascending: true
+                    }
+                );
 
-    let deckPosition = 0;
+        if (playersError) {
 
-    for (const player of onlinePlayers) {
+            console.error(
+                "Error obteniendo jugadores:",
+                playersError
+            );
+
+            alert(
+                "❌ No se pudieron cargar los jugadores."
+            );
+
+            return;
+        }
+
+        if (onlinePlayers.length < 2) {
+
+            alert(
+                "❌ Se necesitan al menos 2 jugadores."
+            );
+
+            return;
+        }
+
+        // =========================================
+        // 3. DAR UNA CANCIÓN INICIAL A CADA JUGADOR
+        // =========================================
+
+        let deckPosition = 0;
+
+        for (
+            const player of onlinePlayers
+        ) {
+
+            const firstSongId =
+                deck[deckPosition];
+
+            deckPosition++;
+
+            const { error } =
+                await supabaseClient
+                    .from("game_players")
+                    .update({
+                        timeline_song_ids:
+                            [firstSongId],
+
+                        score: 0,
+
+                        streak: 0
+                    })
+                    .eq(
+                        "id",
+                        player.id
+                    );
+
+            if (error) {
+
+                console.error(
+                    "Error preparando jugador:",
+                    error
+                );
+
+                alert(
+                    "❌ No se pudo preparar a los jugadores."
+                );
+
+                return;
+            }
+        }
+
+        // =========================================
+        // 4. ELEGIR PRIMERA CANCIÓN
+        // =========================================
 
         const firstSongId =
             deck[deckPosition];
 
         deckPosition++;
 
-        const { error } =
-            await supabaseClient
-                .from("game_players")
-                .update({
-                    timeline_song_ids: [firstSongId],
-                    score: 0,
-                    streak: 0
-                })
-                .eq("id", player.id);
+        // =========================================
+        // 5. GUARDAR ESTADO COMPLETO DE LA PARTIDA
+        // =========================================
 
-        if (error) {
+        const {
+            error: gameUpdateError
+        } =
+            await supabaseClient
+                .from("games")
+                .update({
+
+                    song_deck:
+                        deck,
+
+                    deck_position:
+                        deckPosition,
+
+                    current_song_id:
+                        firstSongId,
+
+                    current_player_index:
+                        0,
+
+                    status:
+                        "playing"
+
+                })
+                .eq(
+                    "id",
+                    currentGameId
+                );
+
+        if (gameUpdateError) {
 
             console.error(
-                "Error preparando jugador:",
-                error
+                "❌ Error comenzando partida:",
+                gameUpdateError
             );
 
             alert(
-                "❌ No se pudo preparar a los jugadores."
+                "❌ No se pudo comenzar la partida."
             );
 
             return;
         }
+
+        console.log(
+            "🎮 PARTIDA ONLINE INICIADA"
+        );
+
+        console.log(
+            "🎵 Mazo:",
+            deck
+        );
+
+        console.log(
+            "🎵 Primera canción:",
+            firstSongId
+        );
+
+        console.log(
+            "👤 Primer turno:",
+            0
+        );
     }
-
-    // =========================================
-    // 4. ELEGIR PRIMERA CANCIÓN DE LA PARTIDA
-    // =========================================
-
-    const firstSongId =
-        deck[deckPosition];
-
-    deckPosition++;
-
-    // =========================================
-    // 5. GUARDAR TODO EN SUPABASE
-    // =========================================
-
-    const { error: gameError } =
-        await supabaseClient
-            .from("games")
-            .update({
-
-                song_deck: deck,
-
-                deck_position: deckPosition,
-
-                current_song_id: firstSongId,
-
-                current_player_index: 0
-
-            })
-            .eq("id", currentGameId);
-
-    if (gameError) {
-
-        console.error(
-            "Error preparando partida:",
-            gameError
-        );
-
-        alert(
-            "❌ No se pudo preparar la partida."
-        );
-
-        return;
-    }
-
-    // =========================================
-    // 6. AHORA SÍ: COMENZAR PARTIDA
-    // =========================================
-
-    const { error: statusError } =
-        await supabaseClient
-            .from("games")
-            .update({
-                status: "playing"
-            })
-            .eq("id", currentGameId);
-
-    if (statusError) {
-
-        console.error(
-            "Error comenzando partida:",
-            statusError
-        );
-
-        alert(
-            "❌ No se pudo comenzar la partida."
-        );
-
-        return;
-    }
-
-    console.log("🎮 PARTIDA ONLINE INICIADA");
-    console.log("🎵 Mazo:", deck);
-    console.log("🎵 Primera canción:", firstSongId);
-});
+);
 
     const participantsOptions =
     document.getElementById("participantsOptions");
@@ -1455,6 +1482,41 @@ const winnerSubtitle =
 const winnerButton =
     document.getElementById("winnerButton");
 
+    const playerLeftModal =
+    document.getElementById("playerLeftModal");
+
+const playerLeftName =
+    document.getElementById("playerLeftName");
+
+const playerLeftButton =
+    document.getElementById("playerLeftButton");
+
+    function mostrarJugadorAbandono(nombre) {
+
+    playerLeftName.textContent =
+        nombre;
+
+    playerLeftModal.classList.add(
+        "show"
+    );
+}
+
+function cerrarJugadorAbandono() {
+
+    playerLeftModal.classList.remove(
+        "show"
+    );
+}
+
+playerLeftButton.addEventListener(
+    "click",
+    function () {
+
+        cerrarJugadorAbandono();
+
+    }
+);
+
 
 
 
@@ -1469,7 +1531,9 @@ let currentSong = null;
 
 let currentGameId = null;
 let currentPlayerName = null;
+let currentPlayerId = null;
 let playersChannel = null;
+let departureChannel = null;
 let isGameHost = false;
 let isOnlineGame = false;
 
@@ -1765,20 +1829,34 @@ async function crearPartida() {
     isOnlineGame = true;
     startOnlineButton.style.display = "block";
 
-    // Agregar al creador como jugador 1
-    const { error: playerError } = await supabaseClient
+    
+
+const { data: newPlayer, error: playerError } =
+    await supabaseClient
         .from("game_players")
         .insert({
             game_id: data.id,
             player_name: nombre,
             player_index: 0
-        });
+        })
+        .select()
+        .single();
 
-    if (playerError) {
-        console.error("Error agregando jugador:", playerError);
-        alert("❌ No se pudo agregar el jugador.");
-        return;
-    }
+if (playerError) {
+
+    console.error(
+        "Error agregando jugador:",
+        playerError
+    );
+
+    alert(
+        "❌ No se pudo agregar el jugador."
+    );
+
+    return;
+}
+
+currentPlayerId = newPlayer.id;
 
     console.log("✅ Partida creada:", data);
     console.log("✅ Jugador agregado:", nombre);
@@ -1837,6 +1915,47 @@ function actualizarListaJugadores(players) {
 }
 
 async function escucharJugadores(gameId) {
+
+    // =========================================
+// CANAL PARA AVISAR ABANDONOS
+// =========================================
+
+if (departureChannel) {
+
+    await supabaseClient.removeChannel(
+        departureChannel
+    );
+
+    departureChannel = null;
+}
+
+departureChannel =
+    supabaseClient.channel(
+        "game-departures-" + gameId
+    );
+
+departureChannel.on(
+    "broadcast",
+    { event: "player_left" },
+    function (payload) {
+
+        const data =
+            payload.payload;
+
+        // No mostrar el aviso al jugador que salió
+        if (
+            data.playerId === currentPlayerId
+        ) {
+            return;
+        }
+
+        mostrarJugadorAbandono(
+    data.playerName
+);
+    }
+);
+
+departureChannel.subscribe();
 
     // =========================================
     // ELIMINAR CANAL ANTERIOR
@@ -1956,13 +2075,37 @@ async function escucharJugadores(gameId) {
 
                 async function(payload) {
 
-                    console.log(
-                        "🔄 Cambio detectado en jugadores:",
-                        payload
-                    );
+    console.log(
+        "🔄 Cambio detectado en jugadores:",
+        payload
+    );
 
-                    await cargarLista();
-                }
+    // =========================================
+    // JUGADOR SE SALIÓ
+    // =========================================
+
+    if (
+        payload.eventType === "DELETE"
+    ) {
+
+        const jugadorSalio =
+            payload.old;
+
+        if (
+            jugadorSalio &&
+            jugadorSalio.player_name
+        ) {
+
+            alert(
+                "🎵 " +
+                jugadorSalio.player_name +
+                " se ha salido de la partida."
+            );
+        }
+    }
+
+    await cargarLista();
+}
             )
 
             .subscribe(function(status) {
@@ -3887,7 +4030,84 @@ continueButton.addEventListener(
 
 
 
+// ==================================================
+// SALIR DE LA PARTIDA ONLINE
+// ==================================================
 
+async function salirDePartidaOnline() {
+
+    if (
+        !isOnlineGame ||
+        !currentPlayerId ||
+        !currentGameId
+    ) {
+        return;
+    }
+
+    console.log(
+        "🚪 Saliendo de la partida..."
+    );
+
+    // =========================================
+// AVISAR A LOS DEMÁS JUGADORES
+// =========================================
+
+if (departureChannel) {
+
+    await departureChannel.send({
+
+        type: "broadcast",
+
+        event: "player_left",
+
+        payload: {
+
+            playerId: currentPlayerId,
+
+            playerName: currentPlayerName
+
+        }
+
+    });
+
+}
+    const { error } =
+        await supabaseClient
+            .from("game_players")
+            .delete()
+            .eq("id", currentPlayerId)
+            .eq("game_id", currentGameId);
+
+    if (error) {
+
+        console.error(
+            "❌ Error saliendo de la partida:",
+            error
+        );
+
+        return;
+    }
+
+    console.log(
+        "✅ Jugador eliminado de la partida."
+    );
+
+    if (playersChannel) {
+
+        await supabaseClient.removeChannel(
+            playersChannel
+        );
+
+        playersChannel = null;
+    }
+
+    currentPlayerId = null;
+    currentPlayerName = null;
+    currentGameId = null;
+
+    isOnlineGame = false;
+    isGameHost = false;
+}
 
 
 
@@ -3900,6 +4120,8 @@ howButton.addEventListener(
     "click",
     function () {
 
+        
+
         instructionsModal.classList.add(
             "open"
         );
@@ -3909,7 +4131,13 @@ howButton.addEventListener(
 
 homeButton.addEventListener(
     "click",
-    function () {
+    async function () {
+
+        if (isOnlineGame) {
+
+    await salirDePartidaOnline();
+
+}
 
         // Detener la canción del juego
         audioPlayer.pause();
@@ -4150,19 +4378,32 @@ if (!nombre) {
     const playerIndex = existingPlayers.length;
 
     // Agregar jugador
-    const { error: insertError } = await supabaseClient
+    const { data: newPlayer, error: insertError } =
+    await supabaseClient
         .from("game_players")
         .insert({
             game_id: game.id,
             player_name: nombre,
             player_index: playerIndex
-        });
+        })
+        .select()
+        .single();
 
-    if (insertError) {
-        console.error("Error agregando jugador:", insertError);
-        alert("❌ No se pudo entrar a la partida.");
-        return;
-    }
+if (insertError) {
+
+    console.error(
+        "Error agregando jugador:",
+        insertError
+    );
+
+    alert(
+        "❌ No se pudo entrar a la partida."
+    );
+
+    return;
+}
+
+currentPlayerId = newPlayer.id;
 
     // Guardar datos actuales
    currentGameId = game.id;
