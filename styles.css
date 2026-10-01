@@ -4815,3 +4815,381 @@ body::marker {
     }
 
 }
+
+/* ==================================================
+   MODAL JUGADOR ABANDONÓ
+================================================== */
+
+.player-left-modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 99999;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(113, 35, 160, 0.25),
+            rgba(0, 0, 0, 0.82) 65%
+        );
+
+    backdrop-filter: blur(8px);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+}
+
+
+/* MODAL ACTIVO */
+
+.player-left-modal.show {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+}
+
+
+/* ==================================================
+   CAJA
+================================================== */
+
+.player-left-box {
+
+    position: relative;
+
+    width: 380px;
+
+    max-width: calc(100% - 40px);
+
+    padding: 38px 35px 32px;
+
+    text-align: center;
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #071522,
+            #11102d 55%,
+            #25102f
+        );
+
+    border: 1px solid rgba(
+        52,
+        211,
+        255,
+        0.55
+    );
+
+    box-shadow:
+
+        0 0 25px rgba(
+            0,
+            200,
+            255,
+            0.20
+        ),
+
+        0 0 60px rgba(
+            190,
+            40,
+            255,
+            0.18
+        ),
+
+        inset 0 0 35px rgba(
+            255,
+            40,
+            170,
+            0.06
+        );
+
+    transform:
+        translateY(20px)
+        scale(0.94);
+
+    transition:
+        transform 0.3s
+        cubic-bezier(
+            .2,
+            .8,
+            .2,
+            1
+        );
+}
+
+
+/* ANIMACIÓN DE ENTRADA */
+
+.player-left-modal.show
+.player-left-box {
+
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+
+/* ==================================================
+   BRILLO SUPERIOR
+================================================== */
+
+.player-left-box::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    left: 15%;
+
+    width: 70%;
+
+    height: 2px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #21d4fd,
+            #ff2ca8,
+            transparent
+        );
+
+    box-shadow:
+        0 0 15px #21d4fd,
+        0 0 25px #ff2ca8;
+}
+
+
+/* ==================================================
+   ICONO
+================================================== */
+
+.player-left-icon {
+
+    width: 72px;
+
+    height: 72px;
+
+    margin:
+        0 auto 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-size: 32px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #182d68,
+            #59165e
+        );
+
+    border: 1px solid
+        rgba(42, 214, 255, 0.65);
+
+    box-shadow:
+
+        0 0 15px
+        rgba(0, 200, 255, 0.35),
+
+        0 0 30px
+        rgba(220, 35, 180, 0.20);
+
+    animation:
+        playerLeftPulse 2s
+        ease-in-out infinite;
+}
+
+
+@keyframes playerLeftPulse {
+
+    0%,
+    100% {
+
+        transform: scale(1);
+
+        box-shadow:
+            0 0 15px
+            rgba(0, 200, 255, 0.35);
+    }
+
+    50% {
+
+        transform: scale(1.05);
+
+        box-shadow:
+            0 0 25px
+            rgba(255, 40, 180, 0.45);
+    }
+}
+
+
+/* ==================================================
+   TÍTULO
+================================================== */
+
+.player-left-title {
+
+    font-size: 25px;
+
+    font-weight: 800;
+
+    letter-spacing: 3px;
+
+    color: #f6e8ff;
+
+    text-shadow:
+
+        0 0 8px
+        rgba(255, 210, 255, 0.8),
+
+        0 0 20px
+        rgba(214, 70, 255, 0.45);
+}
+
+
+/* ==================================================
+   NOMBRE
+================================================== */
+
+.player-left-name {
+
+    margin-top: 18px;
+
+    font-size: 28px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    color: #35d9ff;
+
+    text-transform: uppercase;
+
+    text-shadow:
+
+        0 0 8px
+        rgba(35, 215, 255, 0.9),
+
+        0 0 20px
+        rgba(35, 215, 255, 0.45);
+
+    word-break: break-word;
+}
+
+
+/* ==================================================
+   MENSAJE
+================================================== */
+
+.player-left-message {
+
+    margin-top: 5px;
+
+    font-size: 17px;
+
+    color: #aeb8cb;
+
+    letter-spacing: 0.5px;
+}
+
+
+/* ==================================================
+   BOTÓN
+================================================== */
+
+.player-left-button {
+
+    margin-top: 28px;
+
+    padding:
+        13px 30px;
+
+    border: none;
+
+    border-radius: 30px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c2cff,
+            #e329a8
+        );
+
+    box-shadow:
+
+        0 0 12px
+        rgba(218, 45, 255, 0.55),
+
+        0 0 28px
+        rgba(218, 45, 255, 0.25);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.player-left-button:hover {
+
+    transform:
+        translateY(-2px)
+        scale(1.03);
+
+    box-shadow:
+
+        0 0 18px
+        rgba(218, 45, 255, 0.75),
+
+        0 0 35px
+        rgba(218, 45, 255, 0.4);
+}
+
+
+.player-left-button:active {
+
+    transform:
+        scale(0.97);
+}
+
+
