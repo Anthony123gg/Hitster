@@ -1939,6 +1939,18 @@ departureChannel.on(
     { event: "player_left" },
     function (payload) {
 
+        // =========================================
+        // SI YA SALÍ DE LA PARTIDA, IGNORAR AVISO
+        // =========================================
+
+        if (
+            !isOnlineGame ||
+            !currentGameId ||
+            currentGameId !== gameId
+        ) {
+            return;
+        }
+
         const data =
             payload.payload;
 
@@ -1950,8 +1962,8 @@ departureChannel.on(
         }
 
         mostrarJugadorAbandono(
-    data.playerName
-);
+            data.playerName
+        );
     }
 );
 
@@ -3772,20 +3784,33 @@ playGameButton.addEventListener(
 
 playMusicButton.addEventListener(
     "click",
-    function () {
-        
+    async function () {
 
         if (audioPlayer.paused) {
 
-            audioPlayer.play();
+            try {
 
-            playMusicButton.textContent = "⏸";
+                await audioPlayer.play();
 
-            equalizer.classList.add("playing");
+                playMusicButton.textContent = "⏸";
 
-            playerCard.classList.add("playing");
+                equalizer.classList.add("playing");
+                playerCard.classList.add("playing");
+                gameScreen.classList.add("music-playing");
 
-            gameScreen.classList.add("music-playing");
+                console.log("🎵 Música reproduciéndose correctamente.");
+
+            } catch (error) {
+
+                console.error(
+                    "❌ Error reproduciendo música:",
+                    error
+                );
+
+                alert(
+                    "❌ No se pudo reproducir la música en este dispositivo."
+                );
+            }
 
         } else {
 
@@ -3794,13 +3819,9 @@ playMusicButton.addEventListener(
             playMusicButton.textContent = "▶";
 
             equalizer.classList.remove("playing");
-
             playerCard.classList.remove("playing");
-
             gameScreen.classList.remove("music-playing");
-
         }
-
     }
 );
 
