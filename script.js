@@ -939,6 +939,95 @@ const songs = [
             "musica/Hundred Miles - Yall feat. Gabriela Richardson [audio edit].mp3"
 },
 
+    {
+    title: "Paloma ajena",
+    artist: "Agua marina",
+    year: 2001,
+    audio:
+            "musica/Paloma Ajena (but it's only the best part) (looped).mp3"
+},
+
+{
+    title: "DNA",
+    artist: "BTS",
+    year: 2017,
+    audio:
+            "musica/DNA (Short Ver.1)-BTS (Official Audio).mp3"
+},
+
+{
+    title: "Money",
+    artist: "Liza",
+    year: 2021,
+    audio:
+            "musica/money 「lisa」 audio edit (2 versions).mp3"
+},
+
+{
+    title: "Snowman",
+    artist: "SIA",
+    year: 2017,
+    audio:
+            "musica/Sia - Snowman Audio edit.mp3"
+},
+
+{
+    title: "Everybody",
+    artist: "DJ BOBO",
+    year: 1993,
+    audio:
+            "musica/44 - Passinho - DJ Bobo Everybody - #flashbackdotenorio #dance #anos90 #djbobo.mp3"
+},
+
+{
+    title: "Ojitos mentirosos",
+    artist: "La bella luz",
+    year: 2025,
+    audio:
+            "musica/Ojitos Mentirosos No Me Mires - Audio De Tik Tok (LETRA).mp3"
+},
+
+{
+    title: "Night dancer",
+    artist: "Imase",
+    year: 2022,
+    audio:
+            "musica/imase - NIGHT DANCER Dance Cover｜文心.mp3"
+},
+
+{
+    title: "Champions",
+    artist: "Speed",
+    year: 2026,
+    audio:
+            "musica/iShowSpeed I FIFA World Cup 2026™ Closing Ceremony I Full Performance.mp3"
+},
+
+{
+    title: "Good Looking",
+    artist: "Suki Waterhouse",
+    year: 2024,
+    audio:
+            "musica/suki waterhouse - good looking (best part).mp3"
+},
+
+{
+    title: "Moun amour",
+    artist: "Aitana & Zzoilo",
+    year: 2023,
+    audio:
+            "musica/Aitana & Zzoilo - Mon Amour (Remix) (Letra) y es que me encantas tanto si me miras mientras canto.mp3"
+},
+
+{
+    title: "Valentina",
+    artist: "Carla Morrison",
+    year: 2009,
+    audio:
+            "musica/Carla Morrison - Valentina (Letra) valentina vamos a dormir.mp3"
+},
+
+
 
 
     
