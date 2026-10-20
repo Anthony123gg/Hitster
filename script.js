@@ -1027,7 +1027,13 @@ const songs = [
             "musica/Carla Morrison - Valentina (Letra) valentina vamos a dormir.mp3"
 },
 
-
+{
+    title: "Si te vas",
+    artist: "El lobo y la sociedad privada",
+    year: 2004,
+    audio:
+            "musica/🎶Si Te Vas Que Haré - El Lobo y La Sociedad Privada🎶#viral #music #fyp.mp3"
+},
 
 
     
